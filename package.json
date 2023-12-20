@@ -1,0 +1,11 @@
+{
+  "name": "agami-knowledgebase-2",
+  "version": "1.0.0",
+  "description": "This is a Backend Service Of Agami Knowledgebase Project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Java Devlopers",
+  "license": "ISC"
+}
