@@ -1,0 +1,44 @@
+const jwt = require("jsonwebtoken");
+const secretKey = "yourSecretKey";
+const Token = require("../models/TokenModel");
+
+module.exports = authenticateToken = async (req, res, next) => {
+  const accessToken = req.headers.authorization;
+
+  if (!accessToken) return res.sendStatus(401);
+
+  jwt.verify(accessToken, secretKey, async (err, user) => {
+    if (err) {
+      // If access token is expired, check for a refresh token
+      const refreshToken = req.headers["x-refresh-token"];
+
+      if (!refreshToken) return res.sendStatus(403);
+
+      try {
+        // Verify the refresh token
+        const existingToken = await Token.findOne({
+          where: { token: refreshToken },
+        });
+        if (!existingToken) return res.sendStatus(403);
+
+        // If the refresh token is valid, generate a new access token
+        const newAccessToken = jwt.sign(
+          { email: existingToken.email, id: existingToken.userId },
+          secretKey,
+          { expiresIn: "15m" }
+        );
+
+        // Send the new access token to the client
+        res.setHeader("x-access-token", newAccessToken);
+
+        // Continue to the next middleware
+        return next();
+      } catch (error) {
+        console.error("Error during token verification:", error);
+        return res.sendStatus(403);
+      }
+    }
+    req.user = user;
+    next();
+  });
+};
