@@ -2,6 +2,9 @@ const dotenv = require("dotenv");
 const Sequelize = require("sequelize");
 const UserModel = require("../../models/UserModel");
 const TokenModel = require("../../models/TokenModel");
+const TagModel = require("../../models/TagModel")
+const ProductModel = require("../../models/ProductModel")
+const QuestionModel = require("../../models/QuestionModel")
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -28,6 +31,9 @@ sequelize
 // Import and include the User model
 const User = UserModel(sequelize, Sequelize);
 const Token = TokenModel(sequelize, Sequelize);
+const Tag = TagModel(sequelize, Sequelize);
+const Question = QuestionModel(sequelize, Sequelize);
+const Product = ProductModel(sequelize, Sequelize);
 
 // Export Sequelize and the models
 const dbconfig = {
