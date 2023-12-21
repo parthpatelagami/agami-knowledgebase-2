@@ -16,11 +16,12 @@ const TokenModel = (sequelize, Sequelize) => {
       },
       created_date: {
         type: Sequelize.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       expiry_date: {
         type: Sequelize.DATE,
       },
-      COMPANY_ID: {
+      company_id: {
         type: Sequelize.INTEGER,
       },
     },

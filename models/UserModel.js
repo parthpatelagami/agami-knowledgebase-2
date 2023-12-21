@@ -19,11 +19,12 @@ const UserModel = (sequelize, Sequelize) => {
       },
       created_date: {
         type: Sequelize.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       created_by: {
         type: Sequelize.INTEGER,
       },
-      COMPANY_ID: {
+      company_id: {
         type: Sequelize.INTEGER,
       },
     },
@@ -32,10 +33,6 @@ const UserModel = (sequelize, Sequelize) => {
       timestamps: false,
     }
   );
-
-  User.createUser = async (userData) => {
-    return User.create(userData);
-  };
 
   return User;
 };

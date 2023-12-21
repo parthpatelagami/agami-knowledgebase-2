@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const secretKey = "yourSecretKey";
-const Token = require("../models/TokenModel");
+const dbconfig = require("../config/dbconfig/dbconfigmain");
+const Token = dbconfig.models.Token;
 
 module.exports = authenticateToken = async (req, res, next) => {
   const accessToken = req.headers.authorization;
