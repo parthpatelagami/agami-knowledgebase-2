@@ -5,7 +5,7 @@ const TokenModel = require("../../models/TokenModel");
 const TagModel = require("../../models/TagModel")
 const ProductModel = require("../../models/ProductModel")
 const QuestionModel = require("../../models/QuestionModel")
-
+const ArticleModel= require("../../models/QuestionModel")
 dotenv.config(); // Load environment variables from .env file
 
 // Create a new Sequelize with your MySQL connection details
@@ -34,7 +34,7 @@ const Token = TokenModel(sequelize, Sequelize);
 const Tag = TagModel(sequelize, Sequelize);
 const Question = QuestionModel(sequelize, Sequelize);
 const Product = ProductModel(sequelize, Sequelize);
-
+const Article=ArticleModel(sequelize,Sequelize);
 // Export Sequelize and the models
 const dbconfig = {
   Sequelize: Sequelize,
@@ -42,6 +42,7 @@ const dbconfig = {
   models: {
     User: User,
     Token: Token,
+    Article:Article
   },
 };
 
