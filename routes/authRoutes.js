@@ -2,6 +2,7 @@ const express = require("express");
 const {
   jwtLoginController,
   registerUserController,
+  generateOTP,
 } = require("../controllers/AuthController");
 
 //router object
@@ -12,5 +13,8 @@ router.post("/login", jwtLoginController);
 
 //REGISTER || POST
 router.post("/register", registerUserController);
+
+//GENERATE OTP || POST
+router.post("/generateotp", generateOTP);
 
 module.exports = router;
