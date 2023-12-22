@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const authRoutes = require("./routes/authRoutes");
+const questionsRoutes = require("./routes/questionRoutes.js");
 const jwtAuthentication = require("./middlewares/jwtAuthentication.js");
 
 const dbconfig = require("./config/dbconfig/dbconfigmain.js");
@@ -30,10 +31,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes for authentication
-app.use("/", authRoutes);
+app.use("/knowledgebase", authRoutes);
 
 // Middleware for JWT authentication
 app.use(jwtAuthentication);
+
+app.use("/knowledgebase",questionsRoutes);
 
 // Start the server
 app.listen(PORT, () =>

@@ -42,7 +42,8 @@ const dbconfig = {
   models: {
     User: User,
     Token: Token,
-    Article:Article
+    Article:Article,
+    Question:Question
   },
 };
 

@@ -12,9 +12,11 @@ const QuestionModel = (sequelize, Sequelize) => {
         },
         title: {
           type: Sequelize.TEXT,
+          allowNull: false,
         },
         description: {
           type: Sequelize.TEXT,
+          allowNull: false,
         },
         product_id: {
           type: Sequelize.INTEGER,
@@ -24,23 +26,28 @@ const QuestionModel = (sequelize, Sequelize) => {
         },
         visibility: {
             type: Sequelize.ENUM('0','1'),
+            allowNull: false,
         },
         company_id: {
-            type: Sequelize.INTEGER
+            type: Sequelize.INTEGER,
+            allowNull: false,
         },
         created_date: {
-          type: Sequelize.DATE,
-          defaultValue: DataTypes.NOW
+          type: Sequelize.BIGINT,
+          defaultValue: () => Date.now(),
+          allowNull: false,
         },
         modified_date: {
             type: Sequelize.DATE,
         },
         created_by: {
           type: Sequelize.INTEGER,
+          allowNull: false,
         },
         modified_by: {
             type: Sequelize.INTEGER,
-          },
+            allowNull: false,
+        },
       },
       {
         tableName: "questions_mst",
