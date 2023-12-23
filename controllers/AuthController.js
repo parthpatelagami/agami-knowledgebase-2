@@ -5,11 +5,12 @@ const dbconfig = require("../config/dbconfig/dbconfigmain");
 const mailer = require("../helpers/mailer");
 const { Token, User, OTP } = dbconfig.models;
 const { templates } = require("../helpers/templates");
+const Sequelize = require("sequelize");
 
 const secretKey = process.env.SECRET_KEY;
 const accessTokenExpiration = process.env.ACCESS_TOKEN_EXPIRATION;
 
-exports.jwtLoginController = async (req, res) => {
+const jwtLoginController = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -47,7 +48,7 @@ exports.jwtLoginController = async (req, res) => {
   }
 };
 
-exports.verifyOTP = async (req, res) => {
+const verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
 
   try {
@@ -73,7 +74,7 @@ exports.verifyOTP = async (req, res) => {
   }
 };
 
-exports.registerUserController = async (req, res) => {
+const registerUserController = async (req, res) => {
   const { name, email, password, otp } = req.body;
 
   try {
@@ -115,7 +116,7 @@ exports.registerUserController = async (req, res) => {
   }
 };
 
-exports.generateOTP = async (req, res) => {
+const generateOTP = async (req, res) => {
   const { email } = req.body;
   try {
     // Check if a user with the provided email already exists
@@ -157,4 +158,10 @@ exports.generateOTP = async (req, res) => {
     console.error("Error during OTP Generation:", error);
     res.sendStatus(500);
   }
+};
+module.exports = {
+  jwtLoginController,
+  verifyOTP,
+  registerUserController,
+  generateOTP
 };
