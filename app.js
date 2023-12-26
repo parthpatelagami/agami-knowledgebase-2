@@ -7,6 +7,7 @@ const questionsRoutes = require("./routes/questionRoutes.js")
 const categoryRoutes = require("./routes/categoryRoutes.js")
 const articleRoutes=require('./routes/articleRoutes.js')
 const jwtAuthentication = require("./middlewares/jwtAuthentication.js")
+const productRoutes = require("./routes/productRoutes.js")
 
 const dbconfig = require("./config/dbconfig/dbconfigmain.js")
 
@@ -23,7 +24,7 @@ const PORT = process.env.PORT || 3001
 // Enable Cross-Origin Resource Sharing (CORS)
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 )
@@ -42,6 +43,9 @@ app.use(jwtAuthentication)
 app.use("/knowledgebase", questionsRoutes)
 
 app.use("/knowledgebase", categoryRoutes)
+
+app.use("/knowledgebase", productRoutes)
+
 
 // Start the server
 app.listen(PORT, () =>

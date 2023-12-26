@@ -48,6 +48,8 @@ const dbconfig = {
     Token: Token,
     Article: Article,
     OTP: OTP,
+    Product:Product,
+    Question:Question
   },
 };
 
