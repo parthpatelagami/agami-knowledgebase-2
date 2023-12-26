@@ -5,7 +5,7 @@ const TokenModel = require("../../models/TokenModel");
 const TagModel = require("../../models/TagModel");
 const ProductModel = require("../../models/ProductModel");
 const QuestionModel = require("../../models/QuestionModel");
-const ArticleModel = require("../../models/QuestionModel");
+const ArticleModel = require("../../models/ArticleModel");
 const VerifyModel = require("../../models/VerifyModel");
 
 dotenv.config(); // Load environment variables from .env file

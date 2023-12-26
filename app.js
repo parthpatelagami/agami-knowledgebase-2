@@ -5,6 +5,7 @@ const dotenv = require("dotenv")
 const authRoutes = require("./routes/authRoutes")
 const questionsRoutes = require("./routes/questionRoutes.js")
 const categoryRoutes = require("./routes/categoryRoutes.js")
+const articleRoutes=require('./routes/articleRoutes.js')
 const jwtAuthentication = require("./middlewares/jwtAuthentication.js")
 
 const dbconfig = require("./config/dbconfig/dbconfigmain.js")
@@ -34,6 +35,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // Routes for authentication
 app.use("/knowledgebase", authRoutes)
 
+app.use("/knowledgebase",articleRoutes)
 // Middleware for JWT authentication
 app.use(jwtAuthentication)
 
