@@ -1,3 +1,5 @@
+const CompanyModel = require('./CompanyModel')
+
 const UserModel = (sequelize, Sequelize) => {
   const User = sequelize.define(
     "user_mst",
@@ -26,6 +28,11 @@ const UserModel = (sequelize, Sequelize) => {
       },
       company_id: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'company_mst',
+          key: 'id',
+        },
       },
     },
     {
@@ -33,6 +40,10 @@ const UserModel = (sequelize, Sequelize) => {
       timestamps: false,
     }
   );
+  User.belongsTo(CompanyModel(sequelize, Sequelize), {
+    foreignKey: 'company_id',
+    as: 'companyId',
+  });
 
   return User;
 };

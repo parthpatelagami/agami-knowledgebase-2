@@ -7,6 +7,8 @@ const ProductModel = require("../../models/ProductModel");
 const QuestionModel = require("../../models/QuestionModel");
 const ArticleModel = require("../../models/ArticleModel");
 const VerifyModel = require("../../models/VerifyModel");
+const CompanyModel = require("../../models/CompanyModel");
+const CategoryModel = require("../../models/CategoryModel");
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -38,6 +40,8 @@ const Question = QuestionModel(sequelize, Sequelize);
 const Product = ProductModel(sequelize, Sequelize);
 const Article = ArticleModel(sequelize, Sequelize);
 const OTP = VerifyModel(sequelize, Sequelize);
+const Company = CompanyModel(sequelize, Sequelize);
+const Category = CategoryModel(sequelize, Sequelize);
 
 // Export Sequelize and the models
 const dbconfig = {
@@ -49,7 +53,9 @@ const dbconfig = {
     Article: Article,
     OTP: OTP,
     Product:Product,
-    Question:Question
+    Question:Question,
+    Company:Company,
+    Category:Category
   },
 };
 

@@ -1,3 +1,5 @@
+const CompanyModel = require('./CompanyModel')
+
 const TagModel = (sequelize, Sequelize) => {
     const Tag = sequelize.define(
       "tag_mst",
@@ -11,12 +13,25 @@ const TagModel = (sequelize, Sequelize) => {
         tag_name: {
           type: Sequelize.TEXT,
         },
+        company_id: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: 'company_mst',
+            key: 'id',
+          },
+        },
       },
       {
         tableName: "tag_mst",
         timestamps: false,
       }
     );
+
+    Tag.belongsTo(CompanyModel(sequelize, Sequelize), {
+      foreignKey: 'company_id',
+      as: 'companyId',
+    });
   
     Tag.createTag = async (tagData) => {
       return Tag.create(tagData);
