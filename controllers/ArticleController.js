@@ -1,5 +1,5 @@
 const dbconfig = require("../config/dbconfig/dbconfigmain");
-const { Article } = dbconfig.models;
+const { Article,User } = dbconfig.models;
 
 exports.createNewArticleController = async (req, res) => {
     const { title, description, product_id, tag_id, visibility, company_id, modified_date, created_by, modified_by } = req.body;
@@ -38,6 +38,30 @@ exports.createNewArticleController = async (req, res) => {
     try {
       const articleId = req.params.id;
       const article = await Article.findOne({ where: { id: articleId } });
+  
+      if (!article) {
+        return res.status(404).json({ error: 'article not found' });
+      }
+  
+      res.status(200).json({ data:article });
+    } catch (error) {
+      console.error('Error during fetching article by ID:', error);
+      res.sendStatus(500);
+    }
+  };
+  exports.getArticleByUserIdController = async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const article = await Article.findAll({ 
+        where: { created_by: userId },
+        include:[
+          {
+            model: User,
+            as: "createdBy",
+            attributes: ['name']
+          }
+        ]
+      });
   
       if (!article) {
         return res.status(404).json({ error: 'article not found' });

@@ -37,14 +37,16 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use("/knowledgebase", authRoutes)
 
 app.use("/knowledgebase",articleRoutes)
+app.use("/knowledgebase", productRoutes)
+app.use("/knowledgebase", questionsRoutes)
 // Middleware for JWT authentication
 app.use(jwtAuthentication)
 
-app.use("/knowledgebase", questionsRoutes)
+
 
 app.use("/knowledgebase", categoryRoutes)
 
-app.use("/knowledgebase", productRoutes)
+
 
 
 // Start the server

@@ -50,7 +50,7 @@ const ArticleModel = (sequelize, Sequelize) => {
         },
         created_date: {
             type: Sequelize.DATE,
-            defaultValue: DataTypes.NOW,
+            defaultValue: () => Date.now(),
         },
         modified_by: {
           type: Sequelize.INTEGER,
