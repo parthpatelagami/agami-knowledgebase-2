@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
-const secretKey = "yourSecretKey";
 const dbconfig = require("../config/dbconfig/dbconfigmain");
 const Token = dbconfig.models.Token;
+const secretKey = process.env.SECRET_KEY;
+const accessTokenExpiration = process.env.ACCESS_TOKEN_EXPIRATION;
 
 module.exports = authenticateToken = async (req, res, next) => {
   const accessToken = req.headers.authorization;
@@ -26,7 +27,7 @@ module.exports = authenticateToken = async (req, res, next) => {
         const newAccessToken = jwt.sign(
           { email: existingToken.email, id: existingToken.userId },
           secretKey,
-          { expiresIn: "15m" }
+          { expiresIn: accessTokenExpiration }
         );
 
         // Send the new access token to the client

@@ -11,7 +11,7 @@ const secretKey = process.env.SECRET_KEY;
 const accessTokenExpiration = process.env.ACCESS_TOKEN_EXPIRATION;
 
 const jwtLoginController = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, companyId } = req.body;
 
   try {
     // Find the user by email
@@ -36,6 +36,7 @@ const jwtLoginController = async (req, res) => {
         user_id: user.id,
         created_date: new Date(),
         expiry_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days.
+        company_id: companyId,
       });
 
       res.json({ accessToken, refreshToken });
