@@ -50,7 +50,6 @@ const jwtLoginController = async (req, res) => {
 
 const verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
-
   try {
     // Find the OTP record in the database
     const otpRecord = await OTP.findOne({
@@ -60,13 +59,12 @@ const verifyOTP = async (req, res) => {
         expiry_time: { [Sequelize.Op.gte]: new Date() }, // Check if not expired
       },
     });
-
     if (otpRecord) {
       // OTP is valid
-      res.status(200).json({ message: "OTP Verified Successfully" });
+      return { status: 200, message: "OTP Verified Successfully" };
     } else {
       // OTP is invalid or expired
-      res.status(401).json({ message: "Invalid or expired OTP" });
+      return { status: 401, message: "Invalid or expired OTP" };
     }
   } catch (error) {
     console.error("Error during OTP verification:", error);
@@ -75,7 +73,7 @@ const verifyOTP = async (req, res) => {
 };
 
 const registerUserController = async (req, res) => {
-  const { name, email, password, otp } = req.body;
+  const { name, email, password, companyId, otp } = req.body;
 
   try {
     // Check if the user with the provided email already exists
@@ -90,7 +88,6 @@ const registerUserController = async (req, res) => {
     }
     // Verify OTP
     const otpVerification = await verifyOTP(req, res);
-
     // OTP is valid, proceed with registration
     if (otpVerification.status === 200) {
       // Hash the password
@@ -101,6 +98,7 @@ const registerUserController = async (req, res) => {
         name: name,
         email: email,
         password: hashedPassword,
+        company_id: companyId,
       });
 
       res.status(201).json({ message: "User registered successfully" });
@@ -163,5 +161,5 @@ module.exports = {
   jwtLoginController,
   verifyOTP,
   registerUserController,
-  generateOTP
+  generateOTP,
 };
