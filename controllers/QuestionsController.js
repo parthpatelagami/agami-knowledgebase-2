@@ -1,5 +1,5 @@
 const dbconfig = require("../config/dbconfig/dbconfigmain");
-const { Question } = dbconfig.models;
+const { Question,User,Product } = dbconfig.models;
 
 exports.createNewQuestionsController = async (req, res) => {
     const { title, description, product_id, tag_id, visibility, company_id, modified_date, created_by, modified_by } = req.body;
@@ -28,8 +28,14 @@ exports.createNewQuestionsController = async (req, res) => {
 
     try {
 
-      const questions = await Question.findAll();
-      res.status(201).json({ data: questions });
+      const questions = await Question.findAll({
+        include: [{
+          model: User,
+          as: 'createdBy',
+          attributes: ['id', 'name', 'email'],
+        }],
+      })
+      res.status(200).json({ data: questions });
     } catch (error) {
       console.error("Error during get all questions:", error);
       res.sendStatus(500);
@@ -96,6 +102,30 @@ exports.createNewQuestionsController = async (req, res) => {
       res.status(200).json({ message: 'Question deleted successfully' });
     } catch (error) {
       console.error('Error during question deletion:', error);
+      res.sendStatus(500);
+    }
+  };
+
+  exports.getQuestionsByUser = async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const questions = await Question.findAll({
+        include: [{
+          model: User,
+          as: 'createdBy',
+          attributes: ['id', 'name', 'email'],
+          where: { id: 1 }
+        },
+        {
+          model: Product,
+          as: 'productId',
+          attributes: ['id', 'product_name'],
+        }
+      ],
+      });
+      res.status(200).json({ data: questions });
+    } catch (error) {
+      console.error("Error during get questions by user:", error);
       res.sendStatus(500);
     }
   };

@@ -1,6 +1,6 @@
 const express = require("express");
 const {
-    createNewQuestionsController,getAllQuestionsController, editQuestionsController, deleteQuestionsController,getQuestionByIdController
+    createNewQuestionsController,getAllQuestionsController, editQuestionsController, deleteQuestionsController,getQuestionByIdController,getQuestionsByUser
 } = require("../controllers/QuestionsController");
 
 //router object
@@ -11,5 +11,6 @@ router.get("/questions",getAllQuestionsController);
 router.put("/questions/:id",editQuestionsController);
 router.delete("/questions/:id",deleteQuestionsController);
 router.get("/questions/:id",getQuestionByIdController);
+router.get("/questions/users/:id",getQuestionsByUser);
 
 module.exports = router;
