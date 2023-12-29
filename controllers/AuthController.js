@@ -132,6 +132,18 @@ const generateOTP = async (req, res) => {
 
     const expirationTime = new Date(Date.now() + 10 * 60 * 1000); // Set expiration time (e.g., 10 minutes)
 
+    // Check if an OTP has already been sent
+    const existingOTP = await OTP.findOne({
+      where: { email: email },
+    });
+    if (existingOTP) {
+      // Delete the Old OTP
+      await OTP.destroy({
+        where: {
+          where: { email: email },
+        },
+      });
+    }
     // Create a new OTP
     await OTP.create({
       email: email,
