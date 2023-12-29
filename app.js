@@ -9,7 +9,7 @@ const articleRoutes = require("./routes/articleRoutes.js");
 const jwtAuthentication = require("./middlewares/jwtAuthentication.js");
 const productRoutes = require("./routes/productRoutes.js");
 const redisClientConfig = require("./config/dbconfig/cachedbconfig/redisconfig.js");
-
+const checkElasticSearchClusterHealth = require("./service/elsearch/elSearchUtility.js");
 const dbconfig = require("./config/dbconfig/dbconfigmain.js");
 
 const app = express();
@@ -22,6 +22,9 @@ dbconfig.sequelize.sync();
 
 // Redis Connection
 redisClientConfig();
+
+// Elasticsearch Health Check
+checkElasticSearchClusterHealth();
 
 const PORT = process.env.PORT || 3001;
 
