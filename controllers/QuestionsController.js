@@ -45,7 +45,12 @@ exports.createNewQuestionsController = async (req, res) => {
   exports.getQuestionByIdController = async (req, res) => {
     try {
       const questionId = req.params.id;
-      const question = await Question.findOne({ where: { id: questionId } });
+      const question = await Question.findOne({ where: { id: questionId },
+        include: [{
+          model: User,
+          as: 'createdBy',
+          attributes: ['id', 'name', 'email'],
+        }], });
   
       if (!question) {
         return res.status(404).json({ error: 'Question not found' });
