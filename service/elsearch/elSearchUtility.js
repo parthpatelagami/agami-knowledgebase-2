@@ -1,4 +1,4 @@
-import {elClientConfig} from './config/dbconfig/searchdbconfig/elconfig.js';
+const elClientConfig = require('../../config/dbconfig/searchdbconfig/elconfig');
 
 async function checkElasticSearchClusterHealth() {
     try {

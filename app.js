@@ -9,7 +9,7 @@ const articleRoutes = require("./routes/articleRoutes.js");
 const jwtAuthentication = require("./middlewares/jwtAuthentication.js");
 const productRoutes = require("./routes/productRoutes.js");
 const redisClientConfig = require("./config/dbconfig/cachedbconfig/redisconfig.js");
-const checkElasticSearchClusterHealth = require("./service/elsearch/elSearchUtility.js");
+const {checkElasticSearchClusterHealth} = require("./service/elsearch/elSearchUtility.js");
 const dbconfig = require("./config/dbconfig/dbconfigmain.js");
 
 const app = express();
