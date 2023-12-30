@@ -27,12 +27,15 @@ const getAllRepliesInServies = async(id)=>{
 
     try {
         const replies = await QuestionReply.findAll({
-            where: { reply_by: id },
+            where: { 
+                question_id: id,
+                parent_question_reply_id: -1
+            },
             include:[
             {
                 model: User,
                 as: "createdBy",
-                // attributes: ['name']
+                attributes: ['id','name','created_date']
             }
             ]
         });

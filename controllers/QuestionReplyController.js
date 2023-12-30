@@ -16,6 +16,7 @@ const addQuestionReply = async( req, res)=>{
 
 const getAllReplies = async(req, res)=>{
     const questionId = req.params.id
+    
     try {
         const replies = await getAllRepliesInServies(questionId)
         res.status(200).json({message:"Getting All Replys Successfully", data: replies})
