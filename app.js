@@ -11,6 +11,7 @@ const productRoutes = require("./routes/productRoutes.js");
 const redisClientConfig = require("./config/dbconfig/cachedbconfig/redisconfig.js");
 const {checkElasticSearchClusterHealth} = require("./service/elsearch/elSearchUtility.js");
 const dbconfig = require("./config/dbconfig/dbconfigmain.js");
+const questionReplesRoutes = require("./routes/questionReplyRoutes.js");
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use("/knowledgebase", authRoutes);
 app.use("/knowledgebase", articleRoutes);
 app.use("/knowledgebase", productRoutes);
 app.use("/knowledgebase", questionsRoutes);
+app.use("/knowledgebase", questionReplesRoutes)
 // Middleware for JWT authentication
 app.use(jwtAuthentication);
 
