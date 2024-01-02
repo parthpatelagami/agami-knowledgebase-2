@@ -1,5 +1,9 @@
 const elClientConfig = require("../../config/dbconfig/searchdbconfig/elconfig");
 
+const questionIndexParams = {
+  index: "questions",
+};
+
 async function checkElasticSearchClusterHealth() {
   try {
     const health = await elClientConfig.cluster.health({});
