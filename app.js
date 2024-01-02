@@ -32,7 +32,7 @@ const PORT = process.env.PORT || 3001
 // Enable Cross-Origin Resource Sharing (CORS)
 app.use(
   cors({
-    origin: "http://localhost:5174",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 )
@@ -49,6 +49,7 @@ app.use("/knowledgebase", articleRoutes)
 app.use("/knowledgebase", productRoutes)
 app.use("/knowledgebase", questionsRoutes)
 app.use("/knowledgebase", questionReplesRoutes)
+app.use("/knowledgebase", categoryRoutes)
 // Middleware for JWT authentication
 app.use(jwtAuthentication)
 
