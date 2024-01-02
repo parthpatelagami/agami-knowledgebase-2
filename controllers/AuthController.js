@@ -1,15 +1,15 @@
 const authService = require("../service/AuthService");
 
-const jwtLoginController = async (req, res) => {
+const loginUser = async (req, res) => {
   return authService.loginUser(req.body, res);
+};
+
+const registerUser = async (req, res) => {
+  return authService.registerUser(req.body, res);
 };
 
 const verifyOTP = async (req, res) => {
   return authService.verifyOTP(req.body, res);
-};
-
-const registerUserController = async (req, res) => {
-  return authService.registerUser(req.body, res);
 };
 
 const generateOTP = async (req, res) => {
@@ -17,8 +17,8 @@ const generateOTP = async (req, res) => {
 };
 
 module.exports = {
-  jwtLoginController,
+  loginUser,
+  registerUser,
   verifyOTP,
-  registerUserController,
   generateOTP,
 };

@@ -1,7 +1,7 @@
 const express = require("express");
 const {
-  jwtLoginController,
-  registerUserController,
+  loginUser,
+  registerUser,
   generateOTP,
 } = require("../controllers/AuthController");
 
@@ -9,10 +9,10 @@ const {
 const router = express.Router();
 
 //LOGIN || POST
-router.post("/login", jwtLoginController);
+router.post("/login", loginUser);
 
 //REGISTER || POST
-router.post("/register", registerUserController);
+router.post("/register", registerUser);
 
 //GENERATE OTP || POST
 router.post("/generateotp", generateOTP);

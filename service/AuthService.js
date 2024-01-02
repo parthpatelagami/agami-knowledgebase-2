@@ -161,7 +161,7 @@ const generateOTP = async (req, res) => {
         templates.confirmEmails.from,
         email,
         templates.confirmEmails.subject,
-        otp + templates.confirmEmails.subject
+        otp + templates.confirmEmails.message
       )
       .then(() => {
         res.status(201).json({ message: "OTP Sent Successfully" });

@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const dbconfig = require("../config/dbconfig/dbconfigmain");
 const Token = dbconfig.models.Token;
-const secretKey = process.env.SECRET_KEY;
+const secretKey = process.env.ACCESS_TOKEN_SECRET_KEY;
 const accessTokenExpiration = process.env.ACCESS_TOKEN_EXPIRATION;
 
 module.exports = authenticateToken = async (req, res, next) => {
