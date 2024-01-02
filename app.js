@@ -46,16 +46,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes for authentication
 app.use("/knowledgebase", authRoutes);
+app.use("/knowledgebase", userRoutes);
+
+// Middleware for JWT authentication
+app.use(jwtAuthentication);
 
 app.use("/knowledgebase", articleRoutes);
 app.use("/knowledgebase", productRoutes);
 app.use("/knowledgebase", questionsRoutes);
 app.use("/knowledgebase", questionReplesRoutes);
 app.use("/knowledgebase", categoryRoutes);
-// Middleware for JWT authentication
-app.use(jwtAuthentication);
 
-app.use("/knowledgebase", userRoutes);
 
 // Start the server
 app.listen(PORT, () =>

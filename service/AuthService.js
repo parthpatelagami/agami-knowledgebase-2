@@ -44,7 +44,7 @@ const loginUser = async (req, res) => {
         company_id: companyId,
       });
 
-      res.json({ accessToken, refreshToken });
+      res.json({ api_token:accessToken, refreshToken });
     } else {
       res.sendStatus(401);
     }
