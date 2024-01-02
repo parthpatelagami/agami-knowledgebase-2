@@ -5,7 +5,7 @@ const secretKey = process.env.SECRET_KEY;
 const accessTokenExpiration = process.env.ACCESS_TOKEN_EXPIRATION;
 
 module.exports = authenticateToken = async (req, res, next) => {
-  const accessToken = req.headers.authorization;
+  const accessToken = req.headers["x-access-token"];
 
   if (!accessToken) return res.sendStatus(401);
 
@@ -25,7 +25,7 @@ module.exports = authenticateToken = async (req, res, next) => {
 
         // If the refresh token is valid, generate a new access token
         const newAccessToken = jwt.sign(
-          { email: existingToken.email, id: existingToken.userId },
+          { companyId: existingToken.company_id, id: existingToken.userId },
           secretKey,
           { expiresIn: accessTokenExpiration }
         );
