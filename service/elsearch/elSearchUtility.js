@@ -1,14 +1,75 @@
-const elClientConfig = require('../../config/dbconfig/searchdbconfig/elconfig');
+const elClientConfig = require("../../config/dbconfig/searchdbconfig/elconfig");
 
 async function checkElasticSearchClusterHealth() {
-    try {
-      const health = await elClientConfig.cluster.health({});
-      console.log("EL Cluster Health:", health);
-    } catch (error) {
-      console.error("EL - Error Checking EL Health:", error);
-    }
+  try {
+    const health = await elClientConfig.cluster.health({});
+    console.log("EL Cluster Health:", health);
+  } catch (error) {
+    console.error("EL - Error Checking EL Health:", error);
   }
+}
 
-  module.exports ={
-    checkElasticSearchClusterHealth
-  };
+async function addQuestion(questionData) {
+  try {
+    questionIndexParams["body"] = questionData;
+    const responsedata = await elClientConfig.index(questionIndexParams);
+    console.log("EL - Document Added:", responsedata);
+  } catch (error) {
+    console.error("EL - Error adding document:", error);
+  }
+}
+
+async function updateQuestionById(questionId, questionData) {
+  try {
+    questionIndexParams["id"] = questionId;
+    questionIndexParams["body"] = { doc: questionData };
+    questionIndexParams["refresh"] = "wait_for";
+    await elClientConfig.update(questionIndexParams);
+  } catch (error) {
+    console.error("EL - Error updating document:", error);
+  }
+}
+
+async function searchQuestions(companyId, content) {
+  let resultData = {};
+  try {
+    questionIndexParams["body"] = {
+      query: {
+        bool: {
+          must: [
+            {
+              multi_match: {
+                query: content,
+                fields: ["title", "discription"],
+              },
+            },
+          ],
+          filter: [
+            {
+              term: {
+                visibility: 1,
+                company_id: companyId,
+              },
+            },
+          ],
+        },
+      },
+    };
+
+    const searchResultData = await elClientConfig.search(questionIndexParams);
+
+    let searchHits = [];
+
+    if (searchResultData) {
+      searchHits = searchResultData.hits.hits;
+      resultData = searchHits.map((hit) => hit._source);
+    }
+  } catch (error) {}
+}
+
+module.exports = {
+  checkElasticSearchClusterHealth,
+  addQuestion,
+  updateQuestionById,
+  searchQuestions,
+};
