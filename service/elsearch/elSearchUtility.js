@@ -37,7 +37,7 @@ async function updateQuestionById(questionId, questionData) {
 async function searchQuestions(companyId, content) {
   let resultData = {};
   try {
-    questionIndexParams["body"] = {
+    questionIndexParams.body= {
       query: {
         bool: {
           must: [
@@ -51,8 +51,7 @@ async function searchQuestions(companyId, content) {
           filter: [
             {
               term: {
-                visibility: 1,
-                company_id: companyId,
+                visibility: 1                
               },
             },
           ],
@@ -66,9 +65,13 @@ async function searchQuestions(companyId, content) {
 
     if (searchResultData) {
       searchHits = searchResultData.hits.hits;
-      resultData = searchHits.map((hit) => hit._source);
+      if(searchHits){
+        resultData = searchHits.map((hit) => hit._source);
+      }      
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error("EL - Error Search document:", error);
+  }
 }
 
 module.exports = {
