@@ -28,7 +28,7 @@ const QuestionReplyModel = (sequelize, Sequelize)=>{
             },
             parent_question_reply_id:{
                 type: Sequelize.INTEGER,
-                defaultValue: '-1'
+                allowNull: true,
 
             },
             reply_by: {
