@@ -1,43 +1,44 @@
-const elClientConfig = require("../../config/dbconfig/searchdbconfig/elconfig");
+const elClientConfig = require("../../config/dbconfig/searchdbconfig/elconfig")
 
 const questionIndexParams = {
   index: "questions",
-};
+}
 
 async function checkElasticSearchClusterHealth() {
   try {
-    const health = await elClientConfig.cluster.health({});
-    console.log("EL Cluster Health:", health);
+    const health = await elClientConfig.cluster.health({})
+    console.log("EL Cluster Health:", health)
   } catch (error) {
-    console.error("EL - Error Checking EL Health:", error);
+    console.error("EL - Error Checking EL Health:", error)
   }
 }
 
 async function addQuestion(questionData) {
   try {
-    questionIndexParams["body"] = questionData;
-    const responsedata = await elClientConfig.index(questionIndexParams);
-    console.log("EL - Document Added:", responsedata);
+    questionIndexParams["body"] = questionData
+    const responsedata = await elClientConfig.index(questionIndexParams)
+    console.log("EL - Document Added:", responsedata)
   } catch (error) {
-    console.error("EL - Error adding document:", error);
+    console.error("EL - Error adding document:", error)
   }
 }
 
 async function updateQuestionById(questionId, questionData) {
   try {
-    questionIndexParams["id"] = questionId;
-    questionIndexParams["body"] = { doc: questionData };
-    questionIndexParams["refresh"] = "wait_for";
-    await elClientConfig.update(questionIndexParams);
+    questionIndexParams["id"] = questionId
+    questionIndexParams["body"] = { doc: questionData }
+    questionIndexParams["refresh"] = "wait_for"
+    await elClientConfig.update(questionIndexParams)
   } catch (error) {
-    console.error("EL - Error updating document:", error);
+    console.error("EL - Error updating document:", error)
   }
 }
 
 async function searchQuestions(companyId, content) {
-  let resultData = {};
+  console.log(content)
+  let resultData = {}
   try {
-    questionIndexParams.body= {
+    questionIndexParams.body = {
       query: {
         bool: {
           must: [
@@ -51,26 +52,28 @@ async function searchQuestions(companyId, content) {
           filter: [
             {
               term: {
-                visibility: 1                
+                visibility: 1
               },
             },
           ],
         },
       },
-    };
+    }
 
-    const searchResultData = await elClientConfig.search(questionIndexParams);
+    const searchResultData = await elClientConfig.search(questionIndexParams)
 
-    let searchHits = [];
+    let searchHits = []
 
     if (searchResultData) {
-      searchHits = searchResultData.hits.hits;
-      if(searchHits){
-        resultData = searchHits.map((hit) => hit._source);
-      }      
+      searchHits = searchResultData.hits.hits
+      if (searchHits) {
+        resultData = searchHits.map((hit) => hit._source)
+      }
     }
+
+    return searchHits
   } catch (error) {
-    console.error("EL - Error Search document:", error);
+    console.error("EL - Error Search document:", error)
   }
 }
 
@@ -79,4 +82,4 @@ module.exports = {
   addQuestion,
   updateQuestionById,
   searchQuestions,
-};
+}
