@@ -12,7 +12,7 @@ const refreshTokenSecretKey = process.env.REFRESH_TOKEN_SECRET_KEY;
 const refreshTokenExpiration = process.env.REFRESH_TOKEN_EXPIRATION;
 
 const loginUser = async (req, res) => {
-  const { email, password, companyId } = req;
+  const { email, password } = req;
 
   try {
     // Find the user by email
@@ -41,10 +41,10 @@ const loginUser = async (req, res) => {
         user_id: user.id,
         created_date: new Date(),
         expiry_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 7 days.
-        company_id: companyId,
+        company_id: user.company_id,
       });
 
-      res.json({ api_token:accessToken, refreshToken });
+      res.json({ api_token: accessToken, refreshToken });
     } else {
       res.sendStatus(401);
     }
