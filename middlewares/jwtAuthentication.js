@@ -19,35 +19,46 @@ module.exports = authenticateToken = async (req, res, next) => {
 
       try {
         // Verify the refresh token
-        jwt.verify(refreshToken, refreshTokenSecretKey, async (err, user) => {
+        jwt.verify(refreshToken, refreshTokenSecretKey, async (err) => {
           if (err) {
             return res.sendStatus(403);
           }
-
-          // Check for it in the Database
-          const existingToken = await Token.findOne({
-            where: { token: refreshToken },
-          });
-          if (!existingToken) return res.sendStatus(403);
-
-          // If the refresh token is valid, generate a new access token
-          const newAccessToken = jwt.sign(
-            { companyId: existingToken.company_id, id: existingToken.userId },
-            accessTokenSecretKey,
-            { expiresIn: accessTokenExpiration }
-          );
-
-          // Send the new access token to the client
-          res.setHeader("x-access-token", newAccessToken);
-
-          // Continue to the next middleware
-          return next();
         });
+        // Check for it in the Database
+        const existingToken = await Token.findOne({
+          where: { token: refreshToken },
+        });
+        if (!existingToken) return res.sendStatus(403);
+
+        // Add companyId and userId to the request body
+        req.body = {
+          ...req.body,
+          companyId: existingToken.company_id,
+          userId: existingToken.user_id,
+        };
+        // If the refresh token is valid, generate a new access token
+        const newAccessToken = await jwt.sign(
+          { companyId: existingToken.company_id, id: existingToken.user_id },
+          accessTokenSecretKey,
+          { expiresIn: accessTokenExpiration }
+        );
+
+        // Send the new access token to the client
+        res.setHeader("x-access-token", newAccessToken);
+
+        // Continue to the next middleware
+        return next();
       } catch (error) {
         console.error("Error during token verification:", error);
         return res.sendStatus(403);
       }
     }
+    // Add companyId and userId to the request body
+    req.body = {
+      ...req.body,
+      companyId: user.companyId,
+      userId: user.id,
+    };
     req.user = user;
     next();
   });
