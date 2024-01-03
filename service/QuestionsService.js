@@ -10,10 +10,10 @@ exports.createNewQuestions = async (createQuestionData) => {
       product_id: createQuestionData.product_id,
       tag_id: createQuestionData.tag_id,
       visibility: createQuestionData.visibility,
-      company_id: createQuestionData.company_id,
+      company_id: createQuestionData.companyId,
       modified_date: createQuestionData.modified_date,
-      created_by: createQuestionData.created_by,
-      modified_by: createQuestionData.modified_by
+      created_by: createQuestionData.userId,
+      modified_by: createQuestionData.userId
     }).then((createdQuestion) => {
       createQuestionData["question_id"] = createdQuestion.id;
       //Add Data To EL
@@ -26,9 +26,10 @@ exports.createNewQuestions = async (createQuestionData) => {
   }
 };
 
-exports.getAllQuestions = async () => {
+exports.getAllQuestions = async (companyId) => {
   try {
     const questions = await Question.findAll({
+      where: { company_id: companyId },
       include: [
         {
           model: User,
@@ -44,10 +45,26 @@ exports.getAllQuestions = async () => {
   }
 };
 
-exports.getQuestionById = async (questionId) => {
+exports.getAllCompanyQuestions = async () => {
+  try {
+    const questions = await Question.findAll({
+      include: [{
+        model: User,
+        as: 'createdBy',
+        attributes: ['id', 'name', 'email'],
+      }],
+    })
+    return { status: 1,data:questions };
+  } catch (error) {
+    console.error("Error during get all questions:", error);
+    return { status: 0, error: error.message || 'Unknown error' };
+  }
+};
+
+exports.getQuestionById = async (questionId,companyId) => {
   try {
     const question = await Question.findOne({
-      where: { id: questionId },
+      where: { id: questionId,company_id: companyId },
       include: [
         {
           model: User,
@@ -71,7 +88,7 @@ exports.editQuestions = async (editQuestionJsonObject, questionId) => {
   try {
     const questionId = req.params.id;
     const existingQuestion = await Question.findOne({
-      where: { id: questionId },
+      where: { id: questionId,company_id:editQuestionJsonObject.companyId },
     });
 
     if (!existingQuestion) {
@@ -83,9 +100,9 @@ exports.editQuestions = async (editQuestionJsonObject, questionId) => {
     existingQuestion.product_id = editQuestionJsonObject.product_id;
     existingQuestion.tag_id = editQuestionJsonObject.tag_id;
     existingQuestion.visibility = editQuestionJsonObject.visibility;
-    existingQuestion.company_id = editQuestionJsonObject.company_id;
+    existingQuestion.company_id = editQuestionJsonObject.companyId;
     existingQuestion.modified_date = editQuestionJsonObject.modified_date;
-    existingQuestion.modified_by = editQuestionJsonObject.modified_by;
+    existingQuestion.modified_by = editQuestionJsonObject.userId;
 
     await existingQuestion.save();
     return { status: 1, data: existingQuestion };
@@ -95,10 +112,10 @@ exports.editQuestions = async (editQuestionJsonObject, questionId) => {
   }
 };
 
-exports.deleteQuestions = async (questionId) => {
+exports.deleteQuestions = async (questionId,companyId) => {
   try {
     const existingQuestion = await Question.findOne({
-      where: { id: questionId },
+      where: { id: questionId,company_id:companyId },
     });
 
     if (!existingQuestion) {
@@ -114,9 +131,10 @@ exports.deleteQuestions = async (questionId) => {
   }
 };
 
-exports.getQuestionsByUser = async (userId) => {
+exports.getQuestionsByUser = async (userId,companyId) => {
   try {
     const questions = await Question.findAll({
+      where: { company_id: companyId },
       include: [
         {
           model: User,

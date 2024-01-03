@@ -14,6 +14,8 @@ exports.createNewQuestionsController = async (req, res) => {
       modified_date,
       created_by,
       modified_by,
+      companyId,
+      userId
     } = req.body;
     const newQuestionJsonObject = {
       title,
@@ -23,8 +25,8 @@ exports.createNewQuestionsController = async (req, res) => {
       visibility,
       company_id,
       modified_date,
-      created_by,
-      modified_by,
+      companyId,
+      userId
     };
     const response = questionService.createNewQuestions(
       newQuestionJsonObject
@@ -44,7 +46,10 @@ exports.createNewQuestionsController = async (req, res) => {
   exports.getAllQuestionsController = async (req, res) => {
 
     try {
-      const response = questionService.getAllQuestions();
+      const {
+        companyId,
+      } = req.body;
+      const response = questionService.getAllQuestions(companyId);
       if((await response).status == 1) {
         res.status(200).json({ data: (await response).data });
       }
@@ -61,7 +66,10 @@ exports.createNewQuestionsController = async (req, res) => {
   exports.getQuestionByIdController = async (req, res) => {
     try {
       const questionId = req.params.id;
-      const response = questionService.getQuestionById(questionId)
+      const {
+        companyId,
+      } = req.body;
+      const response = questionService.getQuestionById(questionId,companyId)
       if((await response).status == 1) {
         res.status(200).json({ data: (await response).data });
       }
@@ -90,8 +98,8 @@ exports.createNewQuestionsController = async (req, res) => {
           visibility,
           company_id,
           modified_date,
-          created_by,
-          modified_by,
+          companyId,
+          userId
         } = req.body;
         const editQuestionJsonObject = {
           title,
@@ -99,10 +107,9 @@ exports.createNewQuestionsController = async (req, res) => {
           product_id,
           tag_id,
           visibility,
-          company_id,
           modified_date,
-          created_by,
-          modified_by,
+          companyId,
+          userId,
         };
         const questionId = req.params.id; 
         const response = questionService.editQuestions(
@@ -126,7 +133,10 @@ exports.createNewQuestionsController = async (req, res) => {
   exports.deleteQuestionsController = async (req, res) => {
     try {
       const questionId = req.params.id;
-      const response = questionService.deleteQuestions(questionId);
+      const {
+        companyId,
+      } = req.body;
+      const response = questionService.deleteQuestions(questionId,companyId);
 
       if((await response).status == 1) {
         res.status(200).json({ data: 'Question Deleted Successfully' });
@@ -157,8 +167,10 @@ exports.createNewQuestionsController = async (req, res) => {
   exports.getQuestionsByUser = async (req, res) => {
     try {
       const userId = req.params.id;
-      console.log(userId)
-      const response = questionService.getQuestionsByUser(userId);
+      const {
+        companyId,
+      } = req.body;
+      const response = questionService.getQuestionsByUser(userId,companyId);
       if((await response).status == 1) {
         res.status(200).json({ data: (await response).data });
       }
