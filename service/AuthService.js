@@ -4,7 +4,7 @@ const Sequelize = require("sequelize");
 const dbconfig = require("../config/dbconfig/dbconfigmain");
 const mailer = require("../helpers/mailer");
 const { templates } = require("../helpers/templates");
-const { Token, User, OTP } = dbconfig.models;
+const { Token, User, OTP, ForgotPassword } = dbconfig.models;
 
 const accessTokenSecretKey = process.env.ACCESS_TOKEN_SECRET_KEY;
 const accessTokenExpiration = process.env.ACCESS_TOKEN_EXPIRATION;
@@ -175,9 +175,80 @@ const generateOTP = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
+const forgotPassword = async (req, res) => {
+  const { email } = req;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({
+      where: { email: email },
+    });
+
+    if (user) {
+      // Generate an otp and save it to the database
+      let otp = mailer.randomNumber(6);
+
+      await ForgotPassword.create({
+        otp: otp,
+        user_id: user.id,
+        email: email,
+        expiry_time: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes expiration
+      });
+
+      // Send an email to the user with the OTP
+      mailer.send(
+        templates.resetPassword.from,
+        email,
+        templates.resetPassword.subject,
+        otp + templates.resetPassword.message
+      );
+
+      res
+        .status(200)
+        .json({ message: "Password reset instructions sent to your email" });
+    } else {
+      res.status(404).json({ message: "User with this email not found" });
+    }
+  } catch (error) {
+    console.error("Error during forgot password:", error);
+    res.sendStatus(500);
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { otp, password } = req;
+
+  try {
+    // Verify the reset token in the database
+    const resetOTP = await ForgotPassword.findOne({
+      where: { otp: otp, expiry_time: { [Sequelize.Op.gte]: new Date() } },
+    });
+
+    if (resetOTP) {
+      // Update the user's password
+      const user = await User.findByPk(resetOTP.user_id);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await user.update({ password: hashedPassword });
+
+      // Delete the used reset token
+      await resetOTP.destroy();
+
+      res.status(200).json({ message: "Password reset successful" });
+    } else {
+      res.status(401).json({ message: "Invalid or expired reset token" });
+    }
+  } catch (error) {
+    console.error("Error during password reset:", error);
+    res.sendStatus(500);
+  }
+};
+
 module.exports = {
   loginUser,
   registerUser,
   verifyOTP,
   generateOTP,
+  forgotPassword,
+  resetPassword,
 };

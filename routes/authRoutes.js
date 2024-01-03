@@ -3,6 +3,8 @@ const {
   loginUser,
   registerUser,
   generateOTP,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/AuthController");
 
 //router object
@@ -16,5 +18,11 @@ router.post("/register", registerUser);
 
 //GENERATE OTP || POST
 router.post("/generateotp", generateOTP);
+
+//FORGOT PASSWORD || POST
+router.post("/forgotpassword", forgotPassword);
+
+// RESET PPASSWORD || POST
+router.post("/resetpassword", resetPassword);
 
 module.exports = router;
