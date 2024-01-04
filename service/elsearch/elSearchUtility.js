@@ -45,7 +45,7 @@ async function searchQuestions(companyId, content) {
             {
               multi_match: {
                 query: content,
-                fields: ["title", "discription"],
+                fields: ["title", "description"],
               },
             },
           ],

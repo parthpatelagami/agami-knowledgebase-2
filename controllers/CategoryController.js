@@ -2,15 +2,15 @@ const dbconfig = require("../config/dbconfig/dbconfigmain")
 const { Category } = dbconfig.models
 
 exports.createNewCategoryController = async (req, res) => {
-    const { category_name, active, created_by, company_id, modified_by } = req.body
+    const { category_name, active, userId, companyId } = req.body
 
     try {
         const newCategory = await Category.create({
             category_name: category_name,
             active: active,
-            created_by: created_by,
-            company_id: company_id,
-            modified_by: modified_by
+            created_by: userId,
+            company_id: companyId,
+            modified_by: userId
         })
 
         res.status(201).json({ message: "Category Added Successfully" })
