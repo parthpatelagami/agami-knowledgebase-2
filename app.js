@@ -15,6 +15,7 @@ const {
 } = require("./service/elsearch/elSearchUtility.js");
 const dbconfig = require("./config/dbconfig/dbconfigmain.js");
 const questionReplesRoutes = require("./routes/questionReplyRoutes.js");
+require("./cron/calculatePopularQuestion")
 
 const app = express();
 

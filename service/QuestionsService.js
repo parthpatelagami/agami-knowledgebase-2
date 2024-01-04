@@ -1,5 +1,5 @@
 const dbconfig = require("../config/dbconfig/dbconfigmain");
-const { Question, User, Product } = dbconfig.models;
+const { Question, User, Product, sequelize } = dbconfig.models;
 const elSearchUtility = require("../service/elsearch/elSearchUtility");
 
 exports.createNewQuestions = async (createQuestionData) => {
@@ -45,19 +45,19 @@ exports.getAllQuestions = async (companyId) => {
   }
 };
 
-exports.getAllCompanyQuestions = async () => {
+exports.getAllCompanyQuestionRepliesUpvotedCountData = async () => {
   try {
-    const questions = await Question.findAll({
-      include: [{
-        model: User,
-        as: 'createdBy',
-        attributes: ['id', 'name', 'email'],
-      }],
-    })
-    return { status: 1,data:questions };
+    const rawQuery = `
+    SELECT q.id AS question_id,q.company_id, COUNT(DISTINCT qr.id) AS reply_count, COUNT(DISTINCT qu.id) AS upvotes_count FROM questions_mst q LEFT JOIN question_reply_mst qr ON q.id = qr.question_id LEFT JOIN questions_upvotes qu ON q.id = qu.question_id GROUP BY q.id;    `;
+
+    const questions = await sequelize.query(rawQuery, {
+      type: sequelize.QueryTypes.SELECT,
+    });
+
+    return { status: 1, data: questions };
   } catch (error) {
     console.error("Error during get all questions:", error);
-    return { status: 0, error: error.message || 'Unknown error' };
+    return { status: 0, error: error.message || "Unknown error" };
   }
 };
 
