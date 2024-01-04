@@ -188,7 +188,6 @@ exports.getQuestionsCountByUserId = async (req, res) => {
         },
       ],
     });
-    console.log("DATATATATA ", questionsCount);
     return questionsCount;
   } catch (error) {
     console.error("Error during get questions count by userId:", error);
