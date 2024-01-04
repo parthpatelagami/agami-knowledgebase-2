@@ -9,6 +9,8 @@ const articleRoutes = require("./routes/articleRoutes.js");
 const jwtAuthentication = require("./middlewares/jwtAuthentication.js");
 const productRoutes = require("./routes/productRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
+const dashboardRoutes = require("./routes/dashboardRoutes.js");
+
 const redisClientConfig = require("./config/dbconfig/cachedbconfig/redisconfig.js");
 const {
   checkElasticSearchClusterHealth,
@@ -56,6 +58,7 @@ app.use("/knowledgebase", productRoutes);
 app.use("/knowledgebase", questionsRoutes);
 app.use("/knowledgebase", questionReplesRoutes);
 app.use("/knowledgebase", categoryRoutes);
+app.use("/knowledgebase", dashboardRoutes);
 
 // Start the server
 app.listen(PORT, () =>
