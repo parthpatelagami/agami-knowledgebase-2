@@ -5,15 +5,15 @@ const { QuestionReply, User } = dbconfig.models
 
 const addQuestionReply = async(req)=>{
     console.log("Request in servies: ", req)
-    const { reply, question_id, parent_question_reply_id, reply_by, reply_date } = req
+    const { reply, question_id, parent_question_reply_id, reply_date, companyId, userId } = req
     try {
         const myReply = await QuestionReply.create({
             reply: reply,
             question_id: question_id,
             parent_question_reply_id: parent_question_reply_id,
-            reply_by: reply_by,
+            reply_by: userId,
             reply_date: reply_date,
-            company_id: 1,
+            company_id: companyId,
         })
         console.log("Response: ", myReply)
         return 1;        
