@@ -167,9 +167,8 @@ exports.deleteQuestionsController = async (req, res) => {
 
 exports.getQuestionsByUser = async (req, res) => {
   try {
-    const userId = req.params.id
     const {
-      companyId,
+      companyId,userId
     } = req.body
     const response = questionService.getQuestionsByUser(userId, companyId)
     if ((await response).status == 1) {
