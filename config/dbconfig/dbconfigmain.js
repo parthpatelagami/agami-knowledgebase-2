@@ -13,6 +13,7 @@ const QuestionReplyModel = require("../../models/QuestionReplyModel");
 const ForgotPasswordModel = require("../../models/ForgotPasswordModel");
 const QuestionUpvotesModel = require("../../models/QuestionUpvotesModel")
 const PopularQuestionModel = require("../../models/PopularQuestionsModel")
+const logger = require("../../config/logger/logger.config")
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -24,6 +25,9 @@ const sequelize = new Sequelize({
   host: process.env.MYSQL_HOST,
   port: process.env.MYSQL_DBPORT,
   dialect: process.env.MYSQL_DIALECT,
+  timezone:process.env.SERVER_TIMEZONE,
+  logging: msg => logger.info("Query : " + msg),
+  logQueryParameters: true,
 });
 
 // Test the database connection

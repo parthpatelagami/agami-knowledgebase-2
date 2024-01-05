@@ -1,6 +1,7 @@
 const dbconfig = require("../config/dbconfig/dbconfigmain");
 const { Question, User, Product, sequelize } = dbconfig.models;
 const elSearchUtility = require("../service/elsearch/elSearchUtility");
+const logger = require("../config/logger/logger.config.js")
 
 exports.createNewQuestions = async (createQuestionData) => {
   try {
@@ -56,7 +57,7 @@ exports.getAllCompanyQuestionRepliesUpvotedCountData = async () => {
     
     return { status: 1, data: questions };
   } catch (error) {
-    console.error("Error during get all questions:", error);
+    logger.error("Error during get all questions:", error);
     return { status: 0, error: error.message || "Unknown error" };
   }
 };
