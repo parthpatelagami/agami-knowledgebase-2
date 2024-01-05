@@ -1,7 +1,7 @@
 const cron = require("node-cron")
 const  { calculatePopularQuestions } =  require("../utility/calculatePopularQuestion");
 
-cron.schedule('* * * * * *', () => {
+cron.schedule('0 20 * * *', () => {
   try {
     console.log("============================= Cron Started ==================================")
     calculatePopularQuestions();
