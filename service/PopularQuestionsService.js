@@ -9,11 +9,12 @@ exports.insertUpdatePopularQuestions = async (popularQuestionsInsertUpdateData) 
     let questionId;
     let popularQuestion;
     let ifPopularQuestionExist;
+    let existingPopularQuestions = await getAllPopularQuestionData();
 
     for (let i = 0; i < popularQuestionsInsertUpdateData.length; i++) {
       popularQuestion = popularQuestionsInsertUpdateData[i];
       questionId = popularQuestion.question_id;
-      ifPopularQuestionExist = await checkExistingPopularQuestion(questionId)
+      ifPopularQuestionExist = await checkExistingPopularQuestion(questionId,existingPopularQuestions)
       if (ifPopularQuestionExist) {
         popularQuestionUpdateQueries.push(popularQuestion);
       } else {
@@ -68,14 +69,13 @@ const getAllPopularQuestionData = async () => {
         return { status: 0, error: error.message || "Unknown error" };
     }
 };
-const checkExistingPopularQuestion = async (questionId) => {
-    let existingPopularQuestions = await getAllPopularQuestionData();
+const checkExistingPopularQuestion = async (questionId,existingPopularQuestions) => {
     let questionIds = [];
     for (const popularQuestionData of existingPopularQuestions.data) {
         questionIds.push(popularQuestionData.dataValues.question_id)
     }
 
-    if(questionIds.includes(questionId)) {
+    if(questionIds. includes(parseInt(questionId))) {
         return true;
     }
     else {
