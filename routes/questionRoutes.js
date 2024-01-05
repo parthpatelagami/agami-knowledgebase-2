@@ -12,7 +12,7 @@ router.get("/questions", getAllQuestionsController)
 router.put("/questions/:id", editQuestionsController)
 router.delete("/questions/:id", deleteQuestionsController)
 router.get("/questions/:id", getQuestionByIdController)
-router.get("/questions/users/:id", getQuestionsByUser)
+router.get("/users/questions", getQuestionsByUser)
 router.post("/searchquestions", searchQuestion)
 
 module.exports = router

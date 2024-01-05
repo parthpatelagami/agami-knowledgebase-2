@@ -11,6 +11,9 @@ const CompanyModel = require("../../models/CompanyModel");
 const CategoryModel = require("../../models/CategoryModel");
 const QuestionReplyModel = require("../../models/QuestionReplyModel");
 const ForgotPasswordModel = require("../../models/ForgotPasswordModel");
+const QuestionUpvotesModel = require("../../models/QuestionUpvotesModel")
+const PopularQuestionModel = require("../../models/PopularQuestionsModel")
+const logger = require("../../config/logger/logger.config")
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -22,6 +25,9 @@ const sequelize = new Sequelize({
   host: process.env.MYSQL_HOST,
   port: process.env.MYSQL_DBPORT,
   dialect: process.env.MYSQL_DIALECT,
+  timezone:process.env.SERVER_TIMEZONE,
+  logging: msg => logger.info("Query : " + msg),
+  logQueryParameters: true,
 });
 
 // Test the database connection
@@ -46,6 +52,8 @@ const Company = CompanyModel(sequelize, Sequelize);
 const Category = CategoryModel(sequelize, Sequelize);
 const QuestionReply = QuestionReplyModel(sequelize, Sequelize);
 const ForgotPassword = ForgotPasswordModel(sequelize, Sequelize);
+const QuestionUpvotes = QuestionUpvotesModel(sequelize, Sequelize);
+const PopularQuestion = PopularQuestionModel(sequelize, Sequelize);
 
 // Export Sequelize and the models
 const dbconfig = {
@@ -62,6 +70,9 @@ const dbconfig = {
     Category: Category,
     QuestionReply: QuestionReply,
     ForgotPassword: ForgotPassword,
+    QuestionUpvotes:QuestionUpvotes,
+    PopularQuestion:PopularQuestion,
+    sequelize:sequelize
   },
 };
 
