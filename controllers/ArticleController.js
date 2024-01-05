@@ -2,7 +2,7 @@ const dbconfig = require("../config/dbconfig/dbconfigmain");
 const { Article,User } = dbconfig.models;
 
 exports.createNewArticleController = async (req, res) => {
-    const { title, description, product_id, tag_id, visibility, company_id, modified_date, created_by, modified_by } = req.body;
+    const { title, description, product_id, tag_id, visibility, companyId, modified_date,userId } = req.body;
   
     try {
       const newArticle = await Article.create({
@@ -11,10 +11,10 @@ exports.createNewArticleController = async (req, res) => {
         product_id: product_id,
         tag_id: tag_id,
         visibility: visibility,
-        company_id: company_id,
+        company_id: companyId,
         modified_date: modified_date,
-        created_by: created_by,
-        modified_by: modified_by
+        created_by: userId,
+        modified_by: userId
       });
   
       res.status(201).json({ message: "Article registered successfully" });
@@ -51,7 +51,8 @@ exports.createNewArticleController = async (req, res) => {
   };
   exports.getArticleByUserIdController = async (req, res) => {
     try {
-      const userId = req.params.id;
+      const {userId} = req.body;
+      console.log("get article by user id controller",userId)
       const article = await Article.findAll({ 
         where: { created_by: userId },
         include:[

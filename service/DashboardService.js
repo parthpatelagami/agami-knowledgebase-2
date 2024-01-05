@@ -11,6 +11,10 @@ const getDashBoardData = async (req, res) => {
       req,
       res
     );
+    const allArticlesCount = await articlesService.getAllArticlesCount(
+      req,
+      res
+    );
     const myArticlesCount = await articlesService.getArticlesCountByUserId(
       req,
       res
@@ -20,6 +24,7 @@ const getDashBoardData = async (req, res) => {
       res
     );
     const dashboardData = {
+      all_articles_count: allArticlesCount,
       all_questions_count: allQuestionsCount,
       my_questions_count: myQuestionsCount,
       my_article_count: myArticlesCount,
