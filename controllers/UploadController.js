@@ -10,7 +10,7 @@ exports.UploadFileController=(req,res)=>{
     "success": true,
     "time": "2024-01-02 04:56:17",
     "data": {
-        "baseurl": "http:\/\/192.168.1.179:3001\/",
+        "baseurl": "http:\/\/localhost:3001\/",
         "msg": [
             "File image.png was uploaded"
         ],
