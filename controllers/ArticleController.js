@@ -26,8 +26,12 @@ exports.createNewArticleController = async (req, res) => {
   exports.getAllArticlesController = async (req, res) => {
 
     try {
-
-      const articles = await Article.findAll();
+      const {companyId}=req.body;
+      const articles = await Article.findAll(
+        {
+          where: {company_id:companyId}
+        }
+      );
       res.status(201).json({ data: articles });
     } catch (error) {
       console.error("Error during get all articles:", error);
