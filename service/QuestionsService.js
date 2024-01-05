@@ -38,6 +38,9 @@ exports.getAllQuestions = async (companyId) => {
           attributes: ["id", "name", "email"],
         },
       ],
+      order: [
+        ['id', 'DESC'],
+    ],
     });
     return { status: 1, data: questions };
   } catch (error) {
@@ -149,6 +152,9 @@ exports.getQuestionsByUser = async (userId, companyId) => {
           attributes: ["id", "product_name"],
         },
       ],
+      order: [
+        ['id', 'DESC'],
+    ],
     });
     if (!questions) {
       return { status: 404, error: "Question or User not found" };
