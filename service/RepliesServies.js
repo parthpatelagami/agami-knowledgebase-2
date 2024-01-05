@@ -4,7 +4,7 @@ const { QuestionReply, User } = dbconfig.models
 
 
 const addQuestionReply = async(req)=>{
-    console.log("Request in servies: ", req)
+    
     const { reply, question_id, parent_question_reply_id, reply_date, companyId, userId } = req
     try {
         const myReply = await QuestionReply.create({
@@ -15,7 +15,7 @@ const addQuestionReply = async(req)=>{
             reply_date: reply_date,
             company_id: companyId,
         })
-        console.log("Response: ", myReply)
+        
         return 1;        
     } catch (error) {
         console.error("Error during added Reply: ", error);
@@ -29,7 +29,8 @@ const getAllReplyCount = async(id)=>{
     try {
         const replies = await QuestionReply.count({
             where:{                
-                question_id: id,          
+                question_id: id,
+                parent_question_reply_id:null          
             },
         });
         console.log("Count: ", replies)
@@ -40,7 +41,7 @@ const getAllReplyCount = async(id)=>{
    
 }
 
-async function getReplyByQuestionId(questionid){
+async function getReplyByQuestionId(questionid, limitvalue, offsetvalue){
     const id = questionid
     try{
         const mainReplies = await QuestionReply.findAll({
@@ -53,7 +54,8 @@ async function getReplyByQuestionId(questionid){
                 ['reply_date', 'DESC'],
             ],
             attributes: ['id','reply','reply_date', 'reply_by'],
-            
+            offset:Number(offsetvalue),
+            limit:Number(limitvalue),
             include:[
             {
                 model: User,
@@ -118,9 +120,9 @@ async function getReplyByQuestionId(questionid){
     }
 }
 
-async function getReplyByQuestionsId(questionids){
-    const id = questionids.split(",")
-
+async function getReplyByQuestionsId(questionids, limit, offset, clickPageNo){
+    const id = questionids.split(",");
+    
     try{
         const dataObject = await Promise.all(id.map(async item =>{
             const data = await getReplyByQuestionId(item)
@@ -129,7 +131,44 @@ async function getReplyByQuestionsId(questionids){
                 data:data
             }            
         }))
+        const recordsPerPage = limit;
+        const totalRecords = await getAllReplyCount(1)
+        const pageNo = clickPageNo === null || clickPageNo === undefined ? 1 : clickPageNo;
+        const noOfPages = Math.ceil(totalRecords * 1.0 / recordsPerPage);
+        const start = (pageNo - 1)*recordsPerPage
+        const end = (pageNo * recordsPerPage) > totalRecords ? totalRecords : (pageNo * recordsPerPage)
+        const currentPage = offset == null || offset == undefined ? 0 : offset;
+        
+        let loopStart = 0;
+        if (currentPage > 2) {
+            if ((currentPage + 2) <= (noOfPages - 1)) {
+                loopStart = (currentPage - 2);
+            } else if ((noOfPages - 5) < 0) {
+                loopStart = 0;
+            } else {
+                loopStart = (noOfPages - 5);
+            }
+        } else {
+            loopStart = 0;
+        }
+        console.log("loopStart", loopStart);
 
+        let loopEnd = 0;
+        if (currentPage > 2) {
+            if ((currentPage + 2) > (noOfPages - 1)) {
+                loopEnd = (noOfPages - 1);
+            } else {
+                loopEnd = (currentPage + 2);
+            }
+        } else if ((noOfPages - 1) >= 4) {
+            loopEnd = 4;
+        } else {
+            loopEnd = noOfPages - 1;
+        }
+        console.log("loopend", loopEnd); 
+        console.log("No of Pages", noOfPages)
+        console.log("Start:", start)
+        console.log("End:", end)
         return({
             data:dataObject
         })

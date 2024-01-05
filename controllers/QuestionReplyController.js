@@ -29,8 +29,10 @@ const getAllReplyCount = async(req, res)=>{
 
 const getReplyByQuestionId = async(req, res)=>{
     const questionId = req.params.id
+    const limit = req.params.limit
+    const offset = req.params.offset
     try {
-        const replies = await RepliesServies.getReplyByQuestionId(questionId);
+        const replies = await RepliesServies.getReplyByQuestionId(questionId, limit, offset);
         //console.log("Replies In Controller",replies)
         res.status(200).json({message:"Successfully Get Replies.", data: replies})
     } catch (error) {
@@ -41,8 +43,10 @@ const getReplyByQuestionId = async(req, res)=>{
 
 const getReplyByQuestionsId = async(req, res)=>{
     const questionid = req.params.id
+    const limit = req.params.limit
+    const offset = req.params.offset
     try {
-        const replies = await RepliesServies.getReplyByQuestionsId(questionid);
+        const replies = await RepliesServies.getReplyByQuestionsId(questionid, limit, offset);
         res.status(200).json({message:"Success", data: replies})
     } catch (error) {
         console.log(error);
