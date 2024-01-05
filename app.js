@@ -11,6 +11,7 @@ const productRoutes = require("./routes/productRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
 const dashboardRoutes = require("./routes/dashboardRoutes.js");
 const uploadRoutes = require("./routes/uploadRoutes.js");
+const logger = require("./config/logger/logger.config.js");
 const path = require('path');
 const upload = require('./middlewares/FileUploads.js')
 const redisClientConfig = require("./config/dbconfig/cachedbconfig/redisconfig.js");
@@ -68,5 +69,5 @@ app.use("/knowledgebase", dashboardRoutes);
 
 // Start the server
 app.listen(PORT, () =>
-  console.log("Successful! Server is running on port " + PORT)
+    logger.info("Successful! Server is running on port " + PORT)
 );
