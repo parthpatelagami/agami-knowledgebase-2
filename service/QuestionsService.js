@@ -13,7 +13,7 @@ exports.createNewQuestions = async (createQuestionData) => {
       company_id: createQuestionData.companyId,
       modified_date: createQuestionData.modified_date,
       created_by: createQuestionData.userId,
-      modified_by: createQuestionData.userId
+      modified_by: createQuestionData.userId,
     }).then((createdQuestion) => {
       createQuestionData["question_id"] = createdQuestion.id;
       //Add Data To EL
@@ -53,7 +53,7 @@ exports.getAllCompanyQuestionRepliesUpvotedCountData = async () => {
     const questions = await sequelize.query(rawQuery, {
       type: sequelize.QueryTypes.SELECT,
     });
-
+    
     return { status: 1, data: questions };
   } catch (error) {
     console.error("Error during get all questions:", error);
@@ -61,10 +61,10 @@ exports.getAllCompanyQuestionRepliesUpvotedCountData = async () => {
   }
 };
 
-exports.getQuestionById = async (questionId,companyId) => {
+exports.getQuestionById = async (questionId, companyId) => {
   try {
     const question = await Question.findOne({
-      where: { id: questionId,company_id: companyId },
+      where: { id: questionId, company_id: companyId },
       include: [
         {
           model: User,
@@ -88,7 +88,7 @@ exports.editQuestions = async (editQuestionJsonObject, questionId) => {
   try {
     const questionId = req.params.id;
     const existingQuestion = await Question.findOne({
-      where: { id: questionId,company_id:editQuestionJsonObject.companyId },
+      where: { id: questionId, company_id: editQuestionJsonObject.companyId },
     });
 
     if (!existingQuestion) {
@@ -112,10 +112,10 @@ exports.editQuestions = async (editQuestionJsonObject, questionId) => {
   }
 };
 
-exports.deleteQuestions = async (questionId,companyId) => {
+exports.deleteQuestions = async (questionId, companyId) => {
   try {
     const existingQuestion = await Question.findOne({
-      where: { id: questionId,company_id:companyId },
+      where: { id: questionId, company_id: companyId },
     });
 
     if (!existingQuestion) {
@@ -131,7 +131,7 @@ exports.deleteQuestions = async (questionId,companyId) => {
   }
 };
 
-exports.getQuestionsByUser = async (userId,companyId) => {
+exports.getQuestionsByUser = async (userId, companyId) => {
   try {
     const questions = await Question.findAll({
       where: { company_id: companyId },
@@ -156,5 +156,39 @@ exports.getQuestionsByUser = async (userId,companyId) => {
   } catch (error) {
     console.error("Error during get questions by user:", error);
     res.sendStatus(500);
+  }
+};
+
+exports.getAllQuestionsCount = async (req, res) => {
+  const { companyId } = req;
+  try {
+    const questionsCount = await Question.count({
+      where: { company_id: companyId },
+    });
+    return questionsCount;
+  } catch (error) {
+    console.error("Error during get all questions count:", error);
+    return error;
+  }
+};
+
+exports.getQuestionsCountByUserId = async (req, res) => {
+  const { companyId, userId } = req;
+  try {
+    const questionsCount = await Question.count({
+      where: { company_id: companyId },
+      include: [
+        {
+          model: User,
+          as: "createdBy",
+          attributes: [],
+          where: { id: userId },
+        },
+      ],
+    });
+    return questionsCount;
+  } catch (error) {
+    console.error("Error during get questions count by userId:", error);
+    return error;
   }
 };

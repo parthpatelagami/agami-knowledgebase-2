@@ -129,6 +129,7 @@ const generateOTP = async (req, res) => {
     });
 
     if (existingUser) {
+      console.log("IF HERE");
       return res
         .status(409)
         .json({ message: "User with this email already exists" });
@@ -145,7 +146,7 @@ const generateOTP = async (req, res) => {
       // Delete the Old OTP
       await OTP.destroy({
         where: {
-          where: { email: email },
+          email: email,
         },
       });
     }
