@@ -2,6 +2,19 @@ const dbconfig = require("../config/dbconfig/dbconfigmain");
 const { Article, User, Category } = dbconfig.models;
 const Sequelize = require("sequelize");
 
+const getAllArticlesCount = async (req, res) => {
+  const { companyId } = req;
+  try {
+    const articlesCount = await Article.count({
+      where: { company_id: companyId },
+    });
+    return articlesCount;
+  } catch (error) {
+    console.error("Error during get all articles count:", error);
+    return error;
+  }
+};
+
 const getArticlesCountByUserId = async (req, res) => {
   const { userId, companyId } = req;
   try {
@@ -18,7 +31,7 @@ const getArticlesCountByUserId = async (req, res) => {
     });
     return articlesCount;
   } catch (error) {
-    console.error("Error during get questions count by userId:", error);
+    console.error("Error getting articles count by userId:", error);
     return error;
   }
 };
@@ -33,7 +46,7 @@ const getLatestArticles = async (req, res) => {
     });
     res.status(200).json(latestArticles);
   } catch (error) {
-    console.error("Error during get questions count by userId:", error);
+    console.error("Error getting latest articles count:", error);
     res.status(500).json(error);
   }
 };
@@ -71,6 +84,7 @@ const getArticlesCountByCategory = async (req, res) => {
 };
 
 module.exports = {
+  getAllArticlesCount,
   getArticlesCountByUserId,
   getLatestArticles,
   getArticlesCountByCategory,
