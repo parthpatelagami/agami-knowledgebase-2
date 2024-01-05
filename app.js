@@ -10,7 +10,9 @@ const jwtAuthentication = require("./middlewares/jwtAuthentication.js");
 const productRoutes = require("./routes/productRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
 const dashboardRoutes = require("./routes/dashboardRoutes.js");
-
+const uploadRoutes = require("./routes/uploadRoutes.js");
+const path = require('path');
+const upload = require('./middlewares/FileUploads.js')
 const redisClientConfig = require("./config/dbconfig/cachedbconfig/redisconfig.js");
 const {
   checkElasticSearchClusterHealth,
@@ -24,7 +26,7 @@ const app = express();
 dotenv.config();
 
 // Sync Sequelize with the database
-dbconfig.sequelize.sync();
+dbconfig.sequelize.sync({alter:true});
 
 // Redis Connection
 redisClientConfig();
@@ -37,7 +39,7 @@ const PORT = process.env.PORT || 3001;
 // Enable Cross-Origin Resource Sharing (CORS)
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
@@ -46,12 +48,16 @@ app.use(
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
 // Routes for authentication
 app.use("/knowledgebase", authRoutes);
 
 // Middleware for JWT authentication
+app.use("/knowledgebase",upload.single("files[0]"),uploadRoutes);
 app.use(jwtAuthentication);
-
 app.use("/knowledgebase", userRoutes);
 app.use("/knowledgebase", articleRoutes);
 app.use("/knowledgebase", productRoutes);
