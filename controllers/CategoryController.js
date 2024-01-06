@@ -1,19 +1,14 @@
+const categoryServies = require('../service/CategoryService')
 const dbconfig = require("../config/dbconfig/dbconfigmain")
 const { Category } = dbconfig.models
 
 exports.createNewCategoryController = async (req, res) => {
-    const { category_name, active, userId, companyId } = req.body
+    const categoryData = req.body
 
     try {
-        const newCategory = await Category.create({
-            category_name: category_name,
-            active: active,
-            created_by: userId,
-            company_id: companyId,
-            modified_by: userId
-        })
-
-        res.status(201).json({ message: "Category Added Successfully" })
+        const categoryReply = await categoryServies.createNewCategory(categoryData)
+        console.log("categoryReply", categoryReply)
+        res.status(201).json({ message: "Category Added Successfully", data: categoryReply })
     } catch (error) {
         console.error("Error during question registeration:", error)
         res.sendStatus(500)
@@ -23,11 +18,19 @@ exports.createNewCategoryController = async (req, res) => {
 exports.getAllCategoryController = async (req, res) => {
 
     try {
-
-        const category = await Category.findAll()
-        res.status(201).json({ data: category })
+        const {
+            companyId,
+        } = req.body
+        const response = categoryServies.getAllCategory(companyId)
+        if ((await response).status == 1) {
+            res.status(200).json({ data: (await response).data })
+        }
+        else {
+            console.error("Error during get all questions:", (await response).error)
+            res.sendStatus(500)
+        }
     } catch (error) {
-        console.error("Error during get all questions:", error)
+        console.error("Error during question registeration:", error)
         res.sendStatus(500)
     }
 }
@@ -35,13 +38,21 @@ exports.getAllCategoryController = async (req, res) => {
 exports.getCategoryByIdController = async (req, res) => {
     try {
         const categoryId = req.params.id
-        const category = await Category.findOne({ where: { id: categoryId } })
-
-        if (!category) {
-            return res.status(404).json({ error: 'Question not found' })
+        const {
+            companyId,
+        } = req.body
+        const response = categoryServies.getCategoryById(categoryId, companyId)
+        if ((await response).status == 1) {
+            res.status(200).json({ data: (await response).data })
         }
-
-        res.status(200).json({ data: category })
+        else if ((await response).status == 400) {
+            console.error("Question not found...",)
+            res.sendStatus(400)
+        }
+        else {
+            console.error("Error during get questions:", (await response).error)
+            res.sendStatus(500)
+        }
     } catch (error) {
         console.error('Error during fetching question by ID:', error)
         res.sendStatus(500)
@@ -51,25 +62,28 @@ exports.getCategoryByIdController = async (req, res) => {
 exports.editCategoryController = async (req, res) => {
 
     try {
+        const {
+            category_name, active, userId, companyId, modified_date
+        } = req.body
 
-        const { category_name, active, modified_by } = req.body
-        const Id = req.params.id
-        const existingCategory = await Category.findOne({ where: { id: Id } });;
-        console.log("existingCategory", existingCategory)
-
-        if (!existingCategory) {
-            return res.status(404).json({ error: 'Category not found' })
+        const editCategoryObject = {
+            category_name, active, userId, companyId, modified_date
         }
-
-        existingCategory.category_name = category_name
-        existingCategory.active = active
-        existingCategory.modified_by = modified_by
-
-        await existingCategory.save()
-
-        res.status(201).json({ message: "Category Updated Successfully" })
+        const categoryId = req.params.id
+        const response = categoryServies.editCategory(
+            editCategoryObject, categoryId
+        )
+        if ((await response).status == 400) {
+            console.error("Category not found...",)
+            res.sendStatus(400)
+        }
+        else if ((await response).status == 1) {
+            res.status(201).json({ message: "Category edited successfully" })
+        } else {
+            res.sendStatus(500)
+        }
     } catch (error) {
-        console.error("Error during category update:", error)
+        console.error("Error during question registeration:", error)
         res.sendStatus(500)
     }
 }
