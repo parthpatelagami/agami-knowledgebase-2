@@ -12,15 +12,15 @@ const userRoutes = require("./routes/userRoutes.js");
 const dashboardRoutes = require("./routes/dashboardRoutes.js");
 const uploadRoutes = require("./routes/uploadRoutes.js");
 const logger = require("./config/logger/logger.config.js");
-const path = require('path');
-const upload = require('./middlewares/FileUploads.js')
+const path = require("path");
+const upload = require("./middlewares/FileUploads.js");
 const redisClientConfig = require("./config/dbconfig/cachedbconfig/redisconfig.js");
 const {
   checkElasticSearchClusterHealth,
 } = require("./service/elsearch/elSearchUtility.js");
 const dbconfig = require("./config/dbconfig/dbconfigmain.js");
 const questionReplesRoutes = require("./routes/questionReplyRoutes.js");
-require("./cron/calculatePopularQuestion")
+require("./cron/calculatePopularQuestion");
 
 const app = express();
 
@@ -28,15 +28,13 @@ const app = express();
 dotenv.config();
 
 // Sync Sequelize with the database
-dbconfig.sequelize.sync({alter:true});
+dbconfig.sequelize.sync({ alter: true });
 
 // Redis Connection
 redisClientConfig();
 
 // Elasticsearch Health Check
 checkElasticSearchClusterHealth();
-
-const PORT = process.env.PORT || 3001;
 
 // Enable Cross-Origin Resource Sharing (CORS)
 app.use(
@@ -50,16 +48,18 @@ app.use(
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, 'public')));
-
-
+app.use(express.static(path.join(__dirname, "public")));
 
 // Routes for authentication
 app.use("/knowledgebase", authRoutes);
 
+// Unauthenticated Routes
+app.use("/knowledgebase", upload.single("files[0]"), uploadRoutes);
+
 // Middleware for JWT authentication
-app.use("/knowledgebase",upload.single("files[0]"),uploadRoutes);
 app.use(jwtAuthentication);
+
+// Authenticated Routes
 app.use("/knowledgebase", userRoutes);
 app.use("/knowledgebase", articleRoutes);
 app.use("/knowledgebase", productRoutes);
@@ -69,6 +69,8 @@ app.use("/knowledgebase", categoryRoutes);
 app.use("/knowledgebase", dashboardRoutes);
 
 // Start the server
+const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () =>
-    logger.info("Successful! Server is running on port " + PORT)
+  logger.info("Successful! Server is running on port " + PORT)
 );

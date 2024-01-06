@@ -11,7 +11,7 @@ let transporter = nodemailer.createTransport({
 });
 
 exports.send = function (from, to, subject, body) {
-  // send mail with defined transport object
+  // Send mail with defined transport object
   return transporter.sendMail({
     from: from,
     to: to,

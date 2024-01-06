@@ -22,7 +22,7 @@ router.post("/generateotp", generateOTP);
 //FORGOT PASSWORD || POST
 router.post("/forgotpassword", forgotPassword);
 
-// RESET PPASSWORD || POST
+//RESET PASSWORD || POST
 router.post("/resetpassword", resetPassword);
 
 module.exports = router;

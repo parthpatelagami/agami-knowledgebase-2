@@ -40,7 +40,7 @@ const loginUser = async (req, res) => {
         token: refreshToken,
         user_id: user.id,
         created_date: new Date(),
-        expiry_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 7 days.
+        expiry_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days.
         company_id: user.company_id,
       });
 
