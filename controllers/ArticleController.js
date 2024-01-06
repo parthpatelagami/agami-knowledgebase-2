@@ -29,10 +29,17 @@ exports.createNewArticleController = async (req, res) => {
       const {companyId}=req.body;
       const articles = await Article.findAll(
         {
-          where: {company_id:companyId}
+          where: {company_id:companyId},
+          include:[
+            {
+              model: User,
+              as: "createdBy",
+              attributes: ['name']
+            }
+          ]
         }
       );
-      res.status(201).json({ data: articles });
+      res.status(200).json({ data: articles });
     } catch (error) {
       console.error("Error during get all articles:", error);
       res.sendStatus(500);
@@ -41,7 +48,17 @@ exports.createNewArticleController = async (req, res) => {
   exports.getArticleByIdController = async (req, res) => {
     try {
       const articleId = req.params.id;
-      const article = await Article.findOne({ where: { id: articleId } });
+      const {companyId}=req.body;
+      const article = await Article.findOne({ 
+        where: { id: articleId, company_id: companyId },
+        include: [
+          {
+            model: User,
+            as: "createdBy",
+            attributes: ["id", "name", "email"],
+          },
+        ],
+      });
   
       if (!article) {
         return res.status(404).json({ error: 'article not found' });
