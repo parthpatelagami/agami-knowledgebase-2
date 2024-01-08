@@ -49,12 +49,12 @@ exports.getAllQuestions = async (companyId) => {
   }
 };
 
-exports.getAllCompanyQuestionRepliesUpvotedCountData = async () => {
+exports.getAllCompanyQuestionRepliesUpvotedCountData = async (MIN_REPLY_COUNT_FOR_POPULAR_QUESTION,MIN_UPVOTES_COUNT_FOR_POPULAR_QUESTION) => {
   try {
     const rawQuery = `
-    SELECT q.id AS question_id,q.company_id, COUNT(DISTINCT qr.id) AS reply_count, COUNT(DISTINCT qu.id) AS upvotes_count FROM questions_mst q LEFT JOIN question_reply_mst qr ON q.id = qr.question_id LEFT JOIN questions_upvotes qu ON q.id = qu.question_id GROUP BY q.id;    `;
-
+    SELECT q.id AS question_id,q.company_id, COUNT(DISTINCT qr.id) AS reply_count, COUNT(DISTINCT qu.id) AS upvotes_count FROM questions_mst q LEFT JOIN question_reply_mst qr ON q.id = qr.question_id LEFT JOIN questions_upvotes qu ON q.id = qu.question_id GROUP BY q.id HAVING COUNT(DISTINCT qr.id) > :minReplyCount OR COUNT(DISTINCT qu.id) > :minUpvotesCount`;
     const questions = await sequelize.query(rawQuery, {
+      replacements: { minReplyCount: MIN_REPLY_COUNT_FOR_POPULAR_QUESTION, minUpvotesCount: MIN_UPVOTES_COUNT_FOR_POPULAR_QUESTION},
       type: sequelize.QueryTypes.SELECT,
     });
     
