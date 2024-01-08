@@ -1,5 +1,6 @@
 const { INTEGER } = require('sequelize')
 const dbconfig = require('../config/dbconfig/dbconfigmain')
+const { log } = require('winston')
 const { QuestionReply, User } = dbconfig.models
 
 
@@ -41,7 +42,7 @@ const getAllReplyCount = async(id)=>{
    
 }
 
-async function getReplyByQuestionId(questionid, limitvalue, offsetvalue){
+async function getReplyByQuestionid(questionid, limitvalue, offsetvalue){
     const id = questionid
     try{
         const mainReplies = await QuestionReply.findAll({
@@ -120,61 +121,135 @@ async function getReplyByQuestionId(questionid, limitvalue, offsetvalue){
     }
 }
 
-async function getReplyByQuestionsId(questionids, limit, offset, clickPageNo){
+async function getReplyByQuestionId(questionid, limitvalue, offsetvalue){
+    
+    let jArrFinalResponse=[];
+    try{
+
+        const arrQuestionMainReplyData = await QuestionReply.findAll({
+            where: { 
+                question_id: questionid,
+                parent_question_reply_id: null
+            },
+            order: [
+                ['reply_date', 'DESC'],
+            ],
+            attributes: ['id','reply','reply_date', 'reply_by'],
+            offset:Number(offsetvalue),
+            limit:Number(limitvalue),
+            include:[
+            {
+                model: User,
+                as: "createdBy",
+                attributes: ['id','name','created_date']
+            }
+            ]
+        });
+
+        let arrQuestionReplyMasterIds = []
+        arrQuestionMainReplyData.map(reply => arrQuestionReplyMasterIds.push(reply.id))
+    
+        const arrQuestionReplyData = await QuestionReply.findAll({
+            where: { 
+                question_id: questionid,
+                parent_question_reply_id: arrQuestionReplyMasterIds,
+            },
+            order: [
+                ['reply_date', 'DESC'],
+            ],
+            attributes: ['id','reply','reply_date', 'reply_by', 'parent_question_reply_id'],
+            include:[
+            {
+                model: User,
+                as: "createdBy",
+                attributes: ['id','name','created_date']
+            }
+            ]
+        });
+        
+        let arrMainQuestionReplyIds = [];
+        let objChildReplyData = {};
+        let objMainReplyData={};
+        
+        arrQuestionMainReplyData.map(({ id, reply, reply_date, createdBy }) => {
+            const tempMainReplyData = {
+                id,
+                reply,
+                reply_date,
+                createdBy: {
+                    id: createdBy.id,
+                    name: createdBy.name,
+                    created_date: createdBy.created_date,
+                },
+                child_data:[]
+                
+            };
+          
+            arrMainQuestionReplyIds.push(id);
+            objMainReplyData[id] = tempMainReplyData;           
+        });
+
+        arrQuestionReplyData.map(({ id, reply, reply_date, parent_question_reply_id, createdBy }) => {
+           
+            const tempChildReplyData = {
+                id,
+                reply,
+                reply_date,
+                parent_question_reply_id,
+                createdBy: {
+                    id: createdBy.id,
+                    name: createdBy.name,
+                    created_date: createdBy.created_date,
+                }
+                
+            };
+                 
+            objChildReplyData[id] = tempChildReplyData;            
+        });
+
+        Object.keys(objChildReplyData).forEach(childId => {
+            const parentReplyId = objChildReplyData[childId].parent_question_reply_id;
+            
+            if (objMainReplyData[parentReplyId]) {                
+                objMainReplyData[parentReplyId].child_data.push(objChildReplyData[childId]);
+            }
+        });
+
+        Object.keys(objMainReplyData).map(replyId => {
+            jArrFinalResponse.push(objMainReplyData[replyId]);
+        });
+        
+        jArrFinalResponse.forEach(mainReply => {
+            if (mainReply.child_data) {
+                mainReply.child_data.reverse();
+            }
+        });
+        
+        return jArrFinalResponse.reverse();
+        
+        
+    }catch(error){
+        console.error('Error In getReplyByQuestionId():', error)
+        throw error
+    }
+}
+
+async function getReplyByQuestionsId(questionids, limit, offset){
     const id = questionids.split(",");
     
     try{
-        const dataObject = await Promise.all(id.map(async item =>{
-            const data = await getReplyByQuestionId(item)
-            return {
-                question_Id:item,
-                data:data
-            }            
+        const dataAllQuestions = await Promise.all(id.map(async item => {
+            const data = await getReplyByQuestionId(item, limit, offset)
+            console.log("Data", data);
+            return { question_id: item, data: data}
         }))
-        const recordsPerPage = limit;
-        const totalRecords = await getAllReplyCount(1)
-        const pageNo = clickPageNo === null || clickPageNo === undefined ? 1 : clickPageNo;
-        const noOfPages = Math.ceil(totalRecords * 1.0 / recordsPerPage);
-        const start = (pageNo - 1)*recordsPerPage
-        const end = (pageNo * recordsPerPage) > totalRecords ? totalRecords : (pageNo * recordsPerPage)
-        const currentPage = offset == null || offset == undefined ? 0 : offset;
-        
-        let loopStart = 0;
-        if (currentPage > 2) {
-            if ((currentPage + 2) <= (noOfPages - 1)) {
-                loopStart = (currentPage - 2);
-            } else if ((noOfPages - 5) < 0) {
-                loopStart = 0;
-            } else {
-                loopStart = (noOfPages - 5);
-            }
-        } else {
-            loopStart = 0;
-        }
-        console.log("loopStart", loopStart);
-
-        let loopEnd = 0;
-        if (currentPage > 2) {
-            if ((currentPage + 2) > (noOfPages - 1)) {
-                loopEnd = (noOfPages - 1);
-            } else {
-                loopEnd = (currentPage + 2);
-            }
-        } else if ((noOfPages - 1) >= 4) {
-            loopEnd = 4;
-        } else {
-            loopEnd = noOfPages - 1;
-        }
-        console.log("loopend", loopEnd); 
-        console.log("No of Pages", noOfPages)
-        console.log("Start:", start)
-        console.log("End:", end)
+       
         return({
-            data:dataObject
+            data:dataAllQuestions
         })
         
     }catch(error){
-        console.error('Error:', error)
+        console.error('Error In getReplyByQuestionsId():', error)
         throw error
     }
 }
