@@ -58,10 +58,10 @@ app.use(express.static(path.join(__dirname, "public")));
 const swaggerSpecs = swaggerJSDoc(swaggerOptions);
 
 // Serve Swagger UI
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+app.use("/swagger/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // Routes to access the api to send email template
-app.use('/api', openAPIRoutes);
+app.use('/swagger/api', openAPIRoutes);
 
 // Routes for authentication
 app.use("/knowledgebase", authRoutes);

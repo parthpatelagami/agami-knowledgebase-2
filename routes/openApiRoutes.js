@@ -4,7 +4,7 @@ const { sendEmail } = require("../templates/emailTemplate")
 
 /**
  * @swagger
- * /api/send-email-template:
+ * /swagger/api/send-email-template:
  *      get:
  *          summary: Send the email template
  *          tags: [Email Template]
