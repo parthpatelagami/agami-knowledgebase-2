@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const authRoutes = require("./routes/authRoutes");
+const licenseRoutes =require("./routes/licenseRoutes");
 const questionsRoutes = require("./routes/questionRoutes.js");
 const categoryRoutes = require("./routes/categoryRoutes.js");
 const articleRoutes = require("./routes/articleRoutes.js");
@@ -15,7 +16,6 @@ const logger = require("./config/logger/logger.config.js");
 const path = require("path");
 const upload = require("./middlewares/FileUploads.js");
 const agmFilter = require("./middlewares/agmFIlter.js");
-const redisClientConfig = require("./config/dbconfig/cachedbconfig/redisconfig.js");
 const {
   checkElasticSearchClusterHealth,
 } = require("./service/elsearch/elSearchUtility.js");
@@ -36,7 +36,7 @@ dotenv.config();
 dbconfig.sequelize.sync({ alter: true });
 
 // Redis Connection
-redisClientConfig();
+ 
 
 // Elasticsearch Health Check
 checkElasticSearchClusterHealth();
@@ -69,6 +69,9 @@ app.use("/api", openAPIRoutes);
 app.use(agmFilter);
 // Routes for authentication
 app.use("/knowledgebase", authRoutes);
+
+//Routes for Licensing
+app.use("/knowledgebase", licenseRoutes);
 
 // Unauthenticated Routes
 app.use("/knowledgebase", upload.single("files[0]"), uploadRoutes);
