@@ -1,0 +1,18 @@
+{
+    "definition": {
+        "openapi": "3.0.0",
+        "info": {
+            "title": "Test the Email Template",
+            "version": "1.0.0",
+            "description": "This is a sample testing for email template"
+        },
+        "servers": [
+            {
+                "url": "http://localhost:3001"
+            }
+        ]
+    },
+    "apis": [
+        "./routes/openApiRoutes.js"
+    ]
+}

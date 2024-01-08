@@ -21,6 +21,10 @@ const {
 const dbconfig = require("./config/dbconfig/dbconfigmain.js");
 const questionReplesRoutes = require("./routes/questionReplyRoutes.js");
 require("./cron/calculatePopularQuestion");
+const swaggerJSDoc = require("swagger-jsdoc")
+const swaggerUi = require("swagger-ui-express")
+const swaggerOptions = require("./swagger/swagger_options.json")
+const openAPIRoutes = require('./routes/openApiRoutes.js'); 
 
 const app = express();
 
@@ -49,6 +53,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, "public")));
+
+// Implement the configuration
+const swaggerSpecs = swaggerJSDoc(swaggerOptions);
+
+// Serve Swagger UI
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
+// Routes to access the api to send email template
+app.use('/api', openAPIRoutes);
 
 // Routes for authentication
 app.use("/knowledgebase", authRoutes);
