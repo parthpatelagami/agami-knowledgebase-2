@@ -5,8 +5,6 @@ const redisClientConfig = async () => {
     url: process.env.REDIS_URL,
     password: process.env.REDIS_PASSWORD,
   });
-  console.log(process.env.REDIS_URL);
-  console.log(process.env.REDIS_PASSWORD);
 
   try {
     console.log("Starting Redis...");
@@ -16,8 +14,11 @@ const redisClientConfig = async () => {
     await redisClient.connect();
 
     console.log("Redis Connected.");
+
+    return redisClient;
   } catch (error) {
     console.error("Error connecting to Redis:", error);
+    throw error;
   }
 };
 

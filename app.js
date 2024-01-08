@@ -14,6 +14,7 @@ const uploadRoutes = require("./routes/uploadRoutes.js");
 const logger = require("./config/logger/logger.config.js");
 const path = require("path");
 const upload = require("./middlewares/FileUploads.js");
+const agmFilter = require("./middlewares/agmFIlter.js");
 const redisClientConfig = require("./config/dbconfig/cachedbconfig/redisconfig.js");
 const {
   checkElasticSearchClusterHealth,
@@ -21,10 +22,10 @@ const {
 const dbconfig = require("./config/dbconfig/dbconfigmain.js");
 const questionReplesRoutes = require("./routes/questionReplyRoutes.js");
 require("./cron/calculatePopularQuestion");
-const swaggerJSDoc = require("swagger-jsdoc")
-const swaggerUi = require("swagger-ui-express")
-const swaggerOptions = require("./swagger/swagger_options.json")
-const openAPIRoutes = require('./routes/openApiRoutes.js'); 
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+const swaggerOptions = require("./swagger/swagger_options.json");
+const openAPIRoutes = require("./routes/openApiRoutes.js");
 
 const app = express();
 
@@ -61,7 +62,10 @@ const swaggerSpecs = swaggerJSDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // Routes to access the api to send email template
-app.use('/api', openAPIRoutes);
+app.use("/api", openAPIRoutes);
+
+// Middleware for Company License
+app.use(agmFilter);
 
 // Routes for authentication
 app.use("/knowledgebase", authRoutes);
