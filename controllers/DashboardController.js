@@ -7,9 +7,9 @@ const getDashBoardData = async (req, res) => {
   res.status(200).json(data);
 };
 const getPopularQuestions = async (req, res) => {
-  const data = await popularQuestionsService.getAllPopularQuestionData({
-    limit: 10,
-  });
+  const data = await popularQuestionsService.getAllPopularQuestionData(
+    req.body
+  );
   res.status(200).json(data.data);
 };
 const getLatestArticles = async (req, res) => {

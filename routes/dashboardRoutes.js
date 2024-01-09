@@ -9,7 +9,7 @@ const {
 const router = express.Router();
 
 router.get("/getDashBoardData", getDashBoardData);
-router.get("/getPopularQuestions", getPopularQuestions);
-router.get("/getLatestArticles", getLatestArticles);
+router.post("/getPopularQuestions", getPopularQuestions);
+router.post("/getLatestArticles", getLatestArticles);
 
 module.exports = router;

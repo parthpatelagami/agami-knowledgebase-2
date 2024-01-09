@@ -189,13 +189,16 @@ const getArticlesCountByUserId = async (req, res) => {
 };
 
 const getLatestArticles = async (req, res) => {
-  const { companyId } = req;
+  const { companyId, limit } = req;
   try {
-    const latestArticles = await Article.findAll({
+    const options = {
       where: { company_id: companyId },
       order: [["created_date", "DESC"]],
-      limit: 10,
-    });
+    };
+    if (req && limit && typeof limit === "number" && limit > 0) {
+      options.limit = limit;
+    }
+    const latestArticles = await Article.findAll(options);
     return latestArticles;
   } catch (error) {
     console.error("Error getting latest articles count:", error);

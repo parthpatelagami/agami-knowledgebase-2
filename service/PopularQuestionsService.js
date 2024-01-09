@@ -70,15 +70,16 @@ const insertUpdatePopularQuestions = async (
 };
 
 const getAllPopularQuestionData = async (param) => {
-  const { limit } = param;
+  const { limit, companyId } = param;
   try {
     const options = {
+      where: { company_id: companyId },
       order: [["no_of_upvotes", "DESC"]],
       include: [
         {
           model: Question,
           as: "questionId",
-          attributes: ["title"],
+          attributes: ["title", "id"],
         },
       ],
     };
