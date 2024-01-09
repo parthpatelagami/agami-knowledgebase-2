@@ -1,15 +1,20 @@
 const dashboardService = require("../service/DashboardService");
 const articlesService = require("../service/ArticlesService");
-const questionsService = require("../service/QuestionsService");
+const popularQuestionsService = require("../service/PopularQuestionsService");
 
 const getDashBoardData = async (req, res) => {
-  return await dashboardService.getDashBoardData(req.body, res);
+  const data = await dashboardService.getDashBoardData(req.body, res);
+  res.status(200).json(data);
 };
 const getPopularQuestions = async (req, res) => {
-  return questionsService;
+  const data = await popularQuestionsService.getAllPopularQuestionData({
+    limit: 10,
+  });
+  res.status(200).json(data.data);
 };
 const getLatestArticles = async (req, res) => {
-  return await articlesService.getLatestArticles(req.body, res);
+  const data = await articlesService.getLatestArticles(req.body, res);
+  res.status(200).json(data);
 };
 
 module.exports = {

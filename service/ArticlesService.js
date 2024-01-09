@@ -2,8 +2,17 @@ const dbconfig = require("../config/dbconfig/dbconfigmain");
 const { Article, User, Category } = dbconfig.models;
 const Sequelize = require("sequelize");
 
-const createNewArticle=async(req)=>{
-  const { title, description, product_id, tag_id, visibility, companyId, modified_date,userId } = req;
+const createNewArticle = async (req) => {
+  const {
+    title,
+    description,
+    product_id,
+    tag_id,
+    visibility,
+    companyId,
+    modified_date,
+    userId,
+  } = req;
   try {
     const newArticle = await Article.create({
       title: title,
@@ -14,45 +23,38 @@ const createNewArticle=async(req)=>{
       company_id: companyId,
       modified_date: modified_date,
       created_by: userId,
-      modified_by: userId
-      });
-      return 1;
-   
+      modified_by: userId,
+    });
+    return 1;
   } catch (error) {
     console.error("Error during Article registeration:", error);
   }
-}
-const getAllArticles=async(req)=>{
-
+};
+const getAllArticles = async (req) => {
   try {
-    const {companyId}=req;
-    const articles = await Article.findAll(
-      {
-        where: {company_id:companyId},
-        include:[
-          {
-            model: User,
-            as: "createdBy",
-            attributes: ['name']
-          }
-        ],
-        order:[
-          ['id','DESC']
-        ]
-      }
-    );
-    return {status:200,data:articles}
+    const { companyId } = req;
+    const articles = await Article.findAll({
+      where: { company_id: companyId },
+      include: [
+        {
+          model: User,
+          as: "createdBy",
+          attributes: ["name"],
+        },
+      ],
+      order: [["id", "DESC"]],
+    });
+    return { status: 200, data: articles };
   } catch (error) {
     console.error("Error during get all articles:", error);
-    return {status:500,data:{}}
+    return { status: 500, data: {} };
   }
-}
+};
 
-const getArticleById=async(req)=>{
-
+const getArticleById = async (req) => {
   try {
-    const {articleId,companyId}=req;
-    const article = await Article.findOne({ 
+    const { articleId, companyId } = req;
+    const article = await Article.findOne({
       where: { id: articleId, company_id: companyId },
       include: [
         {
@@ -63,51 +65,58 @@ const getArticleById=async(req)=>{
       ],
     });
     if (!article) {
-      return {status:404,data:{}}
+      return { status: 404, data: {} };
     }
-    return {status:200,data:article};
+    return { status: 200, data: article };
   } catch (error) {
-    console.error('Error during fetching article by ID:', error);
-    return {status:500,data:{}}
+    console.error("Error during fetching article by ID:", error);
+    return { status: 500, data: {} };
   }
-}
+};
 
-const getArticleByUserId=async(req)=>{
+const getArticleByUserId = async (req) => {
   try {
-    const {userId} = req;
-    const article = await Article.findAll({ 
+    const { userId } = req;
+    const article = await Article.findAll({
       where: { created_by: userId },
-      include:[
+      include: [
         {
           model: User,
           as: "createdBy",
-          attributes: ['name']
-        }
+          attributes: ["name"],
+        },
       ],
-      order:[
-        ['id','DESC']
-      ]
+      order: [["id", "DESC"]],
     });
     if (!article) {
-      return {status:404,data:{}}
+      return { status: 404, data: {} };
     }
-  
-   return {status:200,data:article}
+
+    return { status: 200, data: article };
   } catch (error) {
-    console.error('Error during fetching article by ID:', error);
-    return {status:500,data:{}}
+    console.error("Error during fetching article by ID:", error);
+    return { status: 500, data: {} };
   }
-}
+};
 
-const editArticle=async(req)=>{
+const editArticle = async (req) => {
   try {
-
-    const { title, description, product_id, tag_id, visibility, company_id, modified_date, created_by, modified_by } = req.body;
+    const {
+      title,
+      description,
+      product_id,
+      tag_id,
+      visibility,
+      company_id,
+      modified_date,
+      created_by,
+      modified_by,
+    } = req.body;
     const articleId = req.params.id;
-    const existingArticle = await Article.findOne({ where: { id: articleId } });;
+    const existingArticle = await Article.findOne({ where: { id: articleId } });
 
     if (!existingArticle) {
-      return {status:404,data:{}};
+      return { status: 404, data: {} };
     }
 
     existingArticle.title = title;
@@ -120,30 +129,30 @@ const editArticle=async(req)=>{
     existingArticle.modified_by = modified_by;
 
     await existingArticle.save();
-    return {status:201,data:{}};
+    return { status: 201, data: {} };
   } catch (error) {
     console.error("Error during article update:", error);
-    return {status:500,data:{}};
+    return { status: 500, data: {} };
   }
-}
+};
 
-const deleteArticle=async(req)=>{
+const deleteArticle = async (req) => {
   try {
     const articleId = req.params.id;
     const existingArticle = await Article.findOne({ where: { id: articleId } });
 
     if (!existingArticle) {
-      return res.status(404).json({ error: 'Article not found' });
+      return res.status(404).json({ error: "Article not found" });
     }
 
     await existingArticle.destroy();
 
-    return {status:{},data:{}};
+    return { status: {}, data: {} };
   } catch (error) {
-    console.error('Error during Article deletion:', error);
+    console.error("Error during Article deletion:", error);
     res.sendStatus(500);
   }
-}
+};
 
 const getAllArticlesCount = async (req, res) => {
   const { companyId } = req;
@@ -187,7 +196,7 @@ const getLatestArticles = async (req, res) => {
       order: [["created_date", "DESC"]],
       limit: 10,
     });
-    res.status(200).json(latestArticles);
+    return latestArticles;
   } catch (error) {
     console.error("Error getting latest articles count:", error);
     res.status(500).json(error);

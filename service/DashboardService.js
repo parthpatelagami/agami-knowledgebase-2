@@ -31,7 +31,7 @@ const getDashBoardData = async (req, res) => {
       category_count: categoryCount,
     };
 
-    res.status(200).json(dashboardData);
+    return dashboardData;
   } catch (error) {
     console.error("Error getting Dashboard Data:", error);
     res.status(500).json(error);
