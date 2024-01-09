@@ -39,13 +39,13 @@ const UserModel = (sequelize, Sequelize) => {
       tableName: "user_mst",
       timestamps: false,
     }
-  );
+  )
   User.belongsTo(CompanyModel(sequelize, Sequelize), {
     foreignKey: 'company_id',
     as: 'companyId',
-  });
+  })
 
-  return User;
-};
+  return User
+}
 
-module.exports = UserModel;
+module.exports = UserModel

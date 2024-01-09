@@ -1,16 +1,16 @@
 const categoryServies = require('../service/CategoryService')
 const dbconfig = require("../config/dbconfig/dbconfigmain")
 const { Category } = dbconfig.models
+const logger = require("../config/logger/logger.config")
 
 exports.createNewCategoryController = async (req, res) => {
     const categoryData = req.body
 
     try {
         const categoryReply = await categoryServies.createNewCategory(categoryData)
-        console.log("categoryReply", categoryReply)
         res.status(201).json({ message: "Category Added Successfully", data: categoryReply })
     } catch (error) {
-        console.error("Error during question registeration:", error)
+        logger.error("Error during question registeration:", error)
         res.sendStatus(500)
     }
 }
@@ -26,11 +26,11 @@ exports.getAllCategoryController = async (req, res) => {
             res.status(200).json({ data: (await response).data })
         }
         else {
-            console.error("Error during get all questions:", (await response).error)
+            logger.error("Error during get all questions:", (await response).error)
             res.sendStatus(500)
         }
     } catch (error) {
-        console.error("Error during question registeration:", error)
+        logger.error("Error during question registeration:", error)
         res.sendStatus(500)
     }
 }
@@ -46,15 +46,15 @@ exports.getCategoryByIdController = async (req, res) => {
             res.status(200).json({ data: (await response).data })
         }
         else if ((await response).status == 400) {
-            console.error("Question not found...",)
+            logger.error("Question not found...",)
             res.sendStatus(400)
         }
         else {
-            console.error("Error during get questions:", (await response).error)
+            logger.error("Error during get questions:", (await response).error)
             res.sendStatus(500)
         }
     } catch (error) {
-        console.error('Error during fetching question by ID:', error)
+        logger.error('Error during fetching question by ID:', error)
         res.sendStatus(500)
     }
 }
@@ -74,7 +74,7 @@ exports.editCategoryController = async (req, res) => {
             editCategoryObject, categoryId
         )
         if ((await response).status == 400) {
-            console.error("Category not found...",)
+            logger.error("Category not found...",)
             res.sendStatus(400)
         }
         else if ((await response).status == 1) {
@@ -83,7 +83,7 @@ exports.editCategoryController = async (req, res) => {
             res.sendStatus(500)
         }
     } catch (error) {
-        console.error("Error during question registeration:", error)
+        logger.error("Error during question registeration:", error)
         res.sendStatus(500)
     }
 }
@@ -91,17 +91,25 @@ exports.editCategoryController = async (req, res) => {
 exports.deleteCategoryController = async (req, res) => {
     try {
         const categoryId = req.params.id
-        const existingCategory = await Category.findOne({ where: { id: categoryId } })
+        const {
+            companyId,
+        } = req.body
+        const response = categoryServies.deleteCategory(categoryId, companyId)
 
-        if (!existingCategory) {
-            return res.status(404).json({ error: 'Category not found' })
+        if ((await response).status == 1) {
+            res.status(200).json({ data: 'Category Deleted Successfully' })
+        }
+        else if ((await response).status == 400) {
+            logger.error("Category not found...",)
+            res.sendStatus(400)
+        }
+        else {
+            logger.error("Error during get category:", (await response).error)
+            res.sendStatus(500)
         }
 
-        await existingCategory.destroy()
-
-        res.status(200).json({ message: 'Category deleted successfully' })
     } catch (error) {
-        console.error('Error during question deletion:', error)
+        logger.error('Error during category deletion:', error)
         res.sendStatus(500)
     }
 }
