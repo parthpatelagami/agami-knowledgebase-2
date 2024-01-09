@@ -11,7 +11,7 @@ const logLevels = {
 };
 
 const transport = new DailyRotateFile({
-  filename: "./logs/agami-knowledgebase-%DATE%.log",
+  filename: "./logs/agami_knowledgebase-%DATE%.log",
   datePattern: "YYYY-MM-DD HH:mm:ss",
   zippedArchive: true,
   maxSize: "20m", // Max size of the log file before rotation
@@ -24,7 +24,7 @@ const logger = winston.createLogger({
     transport,
     new winston.transports.Console(),
     new winston.transports.File({
-      filename: "./logs/agami-knowledgebase.log",
+      filename: "./logs/agami_knowledgebase.log",
     }),
   ],
   format: winston.format.combine(
